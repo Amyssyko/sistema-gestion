@@ -8,20 +8,22 @@ import { GlobalProvider } from "@/app/context/GlobalState"
 
 const Gestion = () => {
 	return (
-		<GlobalProvider>
-			{/**<Header /> */}
-			<div className="grid min-h-screen">
-				<div className="px-5 sm:px-8 md:px-12 lg:mx-46 xl:mx-86 2xl:mx-86 my-auto">
-					<div className="flex justify-center items-center">
-						<ExpenseChart />
+		<>
+			<GlobalProvider>
+				{/**<Header /> */}
+				<div className="grid min-h-screen">
+					<div className="px-5 sm:px-8 md:px-12 lg:mx-46 xl:mx-86 2xl:mx-86 my-auto">
+						<div className="flex justify-center items-center">
+							<ExpenseChart />
+						</div>
+						<TansactionExpense />
+						<Balance />
+						<TransactionForm />
+						<TransactionList />
 					</div>
-					<TansactionExpense />
-					<Balance />
-					<TransactionForm />
-					<TransactionList />
 				</div>
-			</div>
-		</GlobalProvider>
+			</GlobalProvider>
+		</>
 	)
 }
 

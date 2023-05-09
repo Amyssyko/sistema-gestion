@@ -4,32 +4,23 @@ import { useGlobalState } from "../context/GlobalState"
 import { BsPieChartFill } from "react-icons/bs"
 const ExpenseChart = () => {
 	const { transactions } = useGlobalState()
-	console.log(transactions)
+	const total = transactions.reduce((acc, transaction) => (acc += transaction.valor), 0)
 
-	const totalIncomes = transactions
+	/* */
+	const ingresos = transactions
 		.filter((transaction) => transaction.valor > 0)
 		.reduce((acc, transaction) => (acc += transaction.valor), 0)
-		.toFixed(2)
+	//.toFixed(2)
 
-	const totalExpenses =
+	const egresos =
 		transactions
 			.filter((transaction) => transaction.valor < 0)
 			.reduce((acc, transaction) => (acc += transaction.valor), 0) * -1
 
-	console.log({
-		totalIncomes,
-		totalExpenses,
-	})
+	const totalEgresos = Math.round((egresos / ingresos) * 100)
+	const totalIngresos = 100 - totalEgresos
 
-	const expensesPercentage = Math.round((totalExpenses / totalIncomes) * 100)
-	const incomesPercentage = Math.round((totalIncomes / totalExpenses) * 100) //100 - expensesPercentage
-
-	console.log({
-		expensesPercentage,
-		incomesPercentage,
-	})
-
-	if (totalIncomes === 0 && totalExpenses === 0) {
+	if (ingresos === 0 && egresos === 0) {
 		return (
 			<div className="bg-zinc-900 p-4 my-2">
 				<div className="h-full flex items-center justify-center w-full flex-col">
@@ -48,8 +39,8 @@ const ExpenseChart = () => {
 				}}
 				colorScale={["#e74c3c", "#2ecc71"]}
 				data={[
-					{ x: "Gastos", y: `${expensesPercentage}%` },
-					{ x: "Ingresos", y: `${incomesPercentage}%` },
+					{ x: "Gastos", y: `${totalEgresos}%` },
+					{ x: "Ingresos", y: `${totalIngresos}%` },
 				]}
 				labels={({ datum }) => datum.y}
 				labelComponent={<VictoryLabel angle={0} style={{ fill: "blue" }} />}
