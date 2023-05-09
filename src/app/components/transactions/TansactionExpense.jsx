@@ -6,12 +6,12 @@ import React from "react"
 function TansactionExpense() {
 	const { transactions } = useGlobalState()
 	const amount = transactions.map((transaction) => transaction.valor)
-	const ingresos = amount
+	const ingresos = +amount
 		.filter((item) => item > 0)
 		.reduce((acc, item) => (acc += item), 0)
 		.toFixed(2)
 	const egresos =
-		amount
+		+amount
 			.filter((item) => item < 0)
 			.reduce((acc, item) => (acc += item), 0)
 			.toFixed(2) * -1

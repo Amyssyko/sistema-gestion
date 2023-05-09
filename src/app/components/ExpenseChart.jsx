@@ -22,7 +22,13 @@ const ExpenseChart = () => {
 	})
 
 	const expensesPercentage = Math.round((totalExpenses / totalIncomes) * 100)
-	const incomesPercentage = 100 - expensesPercentage
+	const incomesPercentage = Math.round((totalIncomes / totalExpenses) * 100) //100 - expensesPercentage
+
+	console.log({
+		expensesPercentage,
+		incomesPercentage,
+	})
+
 	if (totalIncomes === 0 && totalExpenses === 0) {
 		return (
 			<div className="bg-zinc-900 p-4 my-2">
@@ -45,8 +51,8 @@ const ExpenseChart = () => {
 					{ x: "Gastos", y: `${expensesPercentage}%` },
 					{ x: "Ingresos", y: `${incomesPercentage}%` },
 				]}
-				labels={({ datum }) => datum.x}
-				labelComponent={<VictoryLabel angle={45} style={{ fill: "blue" }} />}
+				labels={({ datum }) => datum.y}
+				labelComponent={<VictoryLabel angle={0} style={{ fill: "blue" }} />}
 			/>
 		</div>
 	)

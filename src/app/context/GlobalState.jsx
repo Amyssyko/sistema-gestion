@@ -12,8 +12,11 @@ export const useGlobalState = () => useContext(GlobalContext)
 
 export const GlobalProvider = ({ children }) => {
 	const [state, dispatch] = useReducer(AppReducer, initialState, () => {
-		const localData = localStorage.getItem("transactions")
-		return localData ? JSON.parse(localData) : initialState
+		if (typeof window !== "undefined") {
+			const localData = localStorage.getItem("transactions")
+			return localData ? JSON.parse(localData) : initialState
+		}
+		return initialState
 	})
 
 	useEffect(() => {
