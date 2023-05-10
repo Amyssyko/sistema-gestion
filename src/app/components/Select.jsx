@@ -8,7 +8,7 @@ const CustomSelect = ({ id, label, name, options, onChange, value, placeholder, 
 				{label}
 			</label>
 			<Select
-				className="border text-sm rounded-lg block w-full p-2.5 bg-white/5  border-gray-600 placeholder-gray-400 text-white dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 "
+				className="block  bg-white/5  placeholder-gray-400 border  text-gray-950 dark:text-white border-gray-600   text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500  w-full p-2.5 dark:bg-gray-90 dark:border-gray-600 dark:placeholder-gray-400  dark:focus:ring-blue-900 dark:focus:border-blue-900  "
 				id={id}
 				name={name}
 				options={options}

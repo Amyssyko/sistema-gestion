@@ -1,11 +1,10 @@
 "use client"
-import { VictoryPie, VictoryLabel } from "victory"
+import { VictoryPie, VictoryLabel, VictoryBar, VictorySharedEvents } from "victory"
 import { useGlobalState } from "../context/GlobalState"
 import { BsPieChartFill } from "react-icons/bs"
 const ExpenseChart = () => {
 	const { transactions } = useGlobalState()
 	const total = transactions.reduce((acc, transaction) => (acc += transaction.valor), 0)
-
 	/* */
 	const ingresos = transactions
 		.filter((transaction) => transaction.valor > 0)
@@ -22,30 +21,41 @@ const ExpenseChart = () => {
 
 	if (ingresos === 0 && egresos === 0) {
 		return (
-			<div className="bg-zinc-900 p-4 my-2">
+			<div className="bg-zinc-90 p-8 my-5">
 				<div className="h-full flex items-center justify-center w-full flex-col">
 					<BsPieChartFill className="text-9xl" />
-					<h1 className="text-1xl font-bold my-2 text-gray-200">No existe datos</h1>
+					<h1 className="text-1xl font-bold my-2 dark:text-gray-200 text-black">No existe datos</h1>
 				</div>
 			</div>
 		)
 	}
 
 	return (
-		<div>
-			<VictoryPie
-				animate={{
-					duration: 3000,
-				}}
-				colorScale={["#e74c3c", "#2ecc71"]}
-				data={[
-					{ x: "Gastos", y: `${totalEgresos}%` },
-					{ x: "Ingresos", y: `${totalIngresos}%` },
-				]}
-				labels={({ datum }) => datum.y}
-				labelComponent={<VictoryLabel angle={0} style={{ fill: "blue" }} />}
-			/>
-		</div>
+		<>
+			<svg viewBox="-300 0 1000 380">
+				<VictoryPie
+					standalone={false}
+					colorScale={["#e74c3c", "#2ecc71"]}
+					width={400}
+					height={400}
+					data={[
+						{ x: `${totalEgresos}%`, y: totalEgresos },
+						{ x: `${totalIngresos}%`, y: totalIngresos },
+					]}
+					innerRadius={70}
+					labelRadius={80}
+					style={{ labels: { fontSize: 18, fill: "blue", animation: 200 } }}
+				/>
+				<VictoryLabel
+					textAnchor="middle"
+					style={{ fontSize: 16, fill: "blue" }}
+					//backgroundStyle={[{ fill: "white", opacity: 0.2 }]}
+					x={200}
+					y={200}
+					text="Gastos e Ingresos"
+				/>
+			</svg>
+		</>
 	)
 }
 
