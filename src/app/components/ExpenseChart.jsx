@@ -1,4 +1,5 @@
 "use client"
+
 import { VictoryPie, VictoryLabel, VictoryBar, VictorySharedEvents } from "victory"
 import { useGlobalState } from "../context/GlobalState"
 import { BsPieChartFill } from "react-icons/bs"
@@ -31,31 +32,29 @@ const ExpenseChart = () => {
 	}
 
 	return (
-		<>
-			<svg viewBox="-300 0 1000 380">
-				<VictoryPie
-					standalone={false}
-					colorScale={["#e74c3c", "#2ecc71"]}
-					width={400}
-					height={400}
-					data={[
-						{ x: `${totalEgresos}%`, y: totalEgresos },
-						{ x: `${totalIngresos}%`, y: totalIngresos },
-					]}
-					innerRadius={70}
-					labelRadius={80}
-					style={{ labels: { fontSize: 18, fill: "blue", animation: 200 } }}
-				/>
-				<VictoryLabel
-					textAnchor="middle"
-					style={{ fontSize: 16, fill: "blue" }}
-					//backgroundStyle={[{ fill: "white", opacity: 0.2 }]}
-					x={200}
-					y={200}
-					text="Gastos e Ingresos"
-				/>
-			</svg>
-		</>
+		<svg viewBox="-300 0 1000 380">
+			<VictoryPie
+				standalone={false}
+				colorScale={["#e74c3c", "#2ecc71"]}
+				width={400}
+				height={400}
+				data={[
+					{ x: `${totalEgresos}%`, y: totalEgresos },
+					{ x: `${totalIngresos}%`, y: totalIngresos },
+				]}
+				innerRadius={70}
+				labelRadius={80}
+				style={{ labels: { fontSize: 18, fill: "blue", animation: 200 } }}
+			/>
+			<VictoryLabel
+				textAnchor="middle"
+				style={{ fontSize: 16, fill: "blue" }}
+				//backgroundStyle={[{ fill: "white", opacity: 0.2 }]}
+				x={200}
+				y={200}
+				text="Gastos e Ingresos"
+			/>
+		</svg>
 	)
 }
 

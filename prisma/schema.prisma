@@ -1,0 +1,59 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["fullTextSearch"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Tipo {
+  INGRESO
+  EGRESO
+}
+
+// Define la entidad "buses"
+model Bus {
+  placa      String       @id @unique
+  modelo     String
+  capacidad  Int
+  anio       Int
+  transacion Transacion[]
+  chofer     Chofer?      @relation(fields: [id_chofer], references: [dni])
+  id_chofer  String?
+  createdAt  DateTime?    @default(now())
+  updatedAt  DateTime?    @updatedAt
+}
+
+// Define la entidad "transacciones"
+model Transacion {
+  id          String    @id @default(cuid())
+  tipo        Tipo
+  fecha       DateTime  @db.Date
+  descripcion String
+  monto       Decimal   @db.Money
+  id_bus      String?
+  bus         Bus?      @relation(fields: [id_bus], references: [placa])
+  createdAt   DateTime? @default(now())
+  updatedAt   DateTime? @updatedAt
+}
+
+// Define la entidad "choferes"
+model Chofer {
+  dni       String    @id @db.VarChar(10)
+  nombre    String?
+  apellido  String?
+  telefono  String?   @db.VarChar(10)
+  email     String?
+  password  String?
+  provincia String?
+  ciudad    String?
+  calle     String?
+  buses     Bus[]
+  createdAt DateTime? @default(now())
+  updatedAt DateTime? @updatedAt
+}

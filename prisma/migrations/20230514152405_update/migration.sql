@@ -1,0 +1,4 @@
+-- AlterTable
+ALTER TABLE "Chofer" ALTER COLUMN "nombre" DROP NOT NULL,
+ALTER COLUMN "apellido" DROP NOT NULL,
+ALTER COLUMN "telefono" DROP NOT NULL;
