@@ -7,43 +7,75 @@ export async function GET(request: Request) {
 	}
 
 	const buses = await prisma.bus.findMany()
+
 	if (isEmptyObject(buses)) {
-		return new NextResponse("No existen buses ", { status: 201 })
+		return new NextResponse("No existen buses ", { status: 404 })
 	}
-	return NextResponse.json(buses)
+
+	const filteredBuses = buses.map(({ createdAt, updatedAt, ...busWithoutData }) => busWithoutData)
+
+	return NextResponse.json(filteredBuses, { status: 200 })
 }
 
 export async function POST(request: Request) {
+	const { placa, modelo, capacidad, anio } = await request.json()
+	const parsedCapacidad = parseInt(capacidad)
+	const parsedAnio = parseInt(anio)
 	try {
-		const { placa, modelo, capacidad, anio, id_chofer } = await request.json()
-
-		const parsedCapacidad = parseInt(capacidad)
-		const parsedAnio = parseInt(anio)
 		const schema = Joi.object({
-			placa: Joi.string().required().min(7),
-			modelo: Joi.string().required().min(3),
-			capacidad: Joi.number().required().min(1),
-			anio: Joi.number().required(),
-			id_chofer: Joi.string().required().min(10),
+			placa: Joi.string()
+				.pattern(new RegExp(/[A-C,E,G-Z]{1}[A]{1}[A-Z]{1}\d{4}/))
+				.required()
+				.min(7)
+				.max(7)
+				.messages({
+					"string.pattern.base": "La matricula no valida",
+					"any.required": "La matricula es requerido",
+					"string.base": "La matricula debe ser solo números",
+					"string.empty": "La matricula está vacio",
+					"string.min": "La matricula debe tener al menos 7 caracteres",
+					"string.max": "La matricula no puede tener más de 7 caracteres",
+				}),
+			modelo: Joi.string().required().messages({
+				"any.required": "El modelo requerida",
+				"string.base": "El modelo no tiene formato correcto",
+				"string.empty": "El modelo está vacio",
+			}),
+			capacidad: Joi.number().required().min(20).max(60).messages({
+				"any.required": "La capacidad es requerido",
+				"number.base": "La capacidad debe ser solo números",
+				"number.empty": "La capacidad está vacio",
+				"number.min": "La capacidad debe ser al menos 20 pasajeros",
+				"number.max": "La capacidad no puede ser más de 60 pasajeros",
+			}),
+			anio: Joi.number()
+				.required()
+				.min(2000)
+				.max(1 + new Date().getFullYear())
+				.messages({
+					"any.required": "El año es requerido",
+					"number.base": "El año debe no tiene el formato correcto",
+					"number.empty": "El año está vacio",
+					"number.min": `El año del bus tiene que ser mayor que ${anio}`,
+					"number.max": `El año del bus tiene que ser igual o menor a ${1 + new Date().getFullYear()}`,
+				}),
 		})
 
-		const { error } = schema.validate({ placa, modelo, capacidad, anio, id_chofer })
+		const { error } = schema.validate({ placa, modelo, capacidad, anio })
 		if (error) {
 			return new NextResponse(error.message, { status: 400 })
 		}
 
-		const licensePlate = await prisma.bus.create({
-			data: { placa, modelo, capacidad: parsedCapacidad, anio: parsedAnio, id_chofer },
+		const bus = await prisma.bus.create({
+			data: { placa, modelo, capacidad: parsedCapacidad, anio: parsedAnio },
 		})
 
-		return new NextResponse(JSON.stringify(licensePlate), {
-			status: 201,
-			headers: { "Content-Type": "application/json" },
-		})
+		const { createdAt, updatedAt, ...busWithoutData } = bus
+
+		return NextResponse.json(busWithoutData, { status: 201 })
 	} catch (error: any) {
-		//console.log(error)
 		if (error.code === "P2002") {
-			return new NextResponse(`Bus with license plate already exists: ${error.meta.target}`, {
+			return new NextResponse(`Ya existe matrícula ${placa}`, {
 				status: 409,
 			})
 		}

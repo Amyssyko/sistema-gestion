@@ -4,7 +4,7 @@ import axios, { AxiosResponse } from "axios"
 import { useRouter } from "next/navigation"
 import { useState } from "react"
 import { toast } from "react-hot-toast"
-import useError from "@/app/hooks/useError"
+import useError from "@/hooks/useError"
 
 interface Registro {
 	dni: string
