@@ -51,12 +51,9 @@ const handler = NextAuth({
 					},
 				})
 				if (!res.ok) {
-					//console.log("error")
 					return null
 				}
-				//console.log("error")
 				const user = await res.json()
-				console.log(user)
 				const { dni, role, nombre, apellido, telefono, email, provincia, ciudad, calle } = user
 				if (res.ok && user) {
 					return {
@@ -77,7 +74,6 @@ const handler = NextAuth({
 
 	callbacks: {
 		jwt: async ({ token, user }: any) => {
-			//console.log(user)
 			if (user) {
 				return {
 					...token,
@@ -88,7 +84,7 @@ const handler = NextAuth({
 		},
 		session: ({ session, token }: any) => {
 			session.user = token as any
-			console.log(session)
+
 			return session
 		},
 	},

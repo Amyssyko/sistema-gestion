@@ -84,20 +84,16 @@ const FromTransaccion: React.FC<Data> = ({ id }) => {
 
 	const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
 		event.preventDefault()
-		//console.log(formData)
-		//console.log(buses)
 		setFormData((prevFormData) => ({
 			...prevFormData,
 			tipo: selectTipo,
 			id_bus: selectPlaca,
 		}))
-		//onSubmit(formData)
 		if (!id) {
 			try {
 				const response: AxiosResponse = await axios.post("/api/transacciones", formData)
 
 				if (response.status === 201) {
-					console.log("registro creado")
 					toast.success("Registro Creado", {
 						duration: 4000,
 						position: "top-right",
@@ -149,8 +145,6 @@ const FromTransaccion: React.FC<Data> = ({ id }) => {
 		}
 	}
 	const handleUpdate = async () => {
-		//console.log(selectPlaca)
-		//console.log(formData.id_bus)
 		setFormData((prevFormData) => ({
 			...prevFormData,
 			tipo: selectTipo,
@@ -158,7 +152,6 @@ const FromTransaccion: React.FC<Data> = ({ id }) => {
 		}))
 
 		try {
-			//console.log(formData)
 			const response: AxiosResponse = await axios.patch(`/api/transacciones/${id}`, formData)
 
 			if (response.status === 200) {
@@ -212,16 +205,12 @@ const FromTransaccion: React.FC<Data> = ({ id }) => {
 	const handleDelete = async () => {
 		try {
 			const response: AxiosResponse = await axios.post(`/api/transacciones/${id}`)
-			//console.log(response)
 
 			if (response.status === 204) {
-				//console.log("pasa")
 				toast.success("Registro Eliminado", {
 					duration: 4000,
 					position: "top-right",
-					// Custom Icon
 					icon: "✅",
-					// Change colors of success/error/loading icon
 					iconTheme: {
 						primary: "#000",
 						secondary: "#fff",

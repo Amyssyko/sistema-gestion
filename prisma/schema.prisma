@@ -64,7 +64,7 @@ model Usuario {
   role      Role      @default(empleado)
   nombre    String?
   apellido  String?
-  telefono  String?   @db.VarChar(10)
+  telefono  String?   @unique @db.VarChar(10)
   email     String?   @unique
   password  String?
   provincia String?
@@ -72,6 +72,7 @@ model Usuario {
   calle     String?
   bus       Bus?      @relation(fields: [busPlaca], references: [placa])
   busPlaca  String?   @unique
+  pago      Pago[]
   createdAt DateTime? @default(now())
   updatedAt DateTime? @updatedAt
 }
@@ -79,10 +80,21 @@ model Usuario {
 model Proveedor {
   id        Int       @id @default(autoincrement())
   nombre    String?
-  telefono  String?
+  telefono  String?   @unique
   email     String?   @unique
   direccion String?
   egreso    Egreso[]
+  createdAt DateTime? @default(now())
+  updatedAt DateTime? @updatedAt
+}
+
+model Pago {
+  id        Int       @id @default(autoincrement())
+  valor     Decimal   @db.Money
+  detalle   String
+  fecha     DateTime
+  Usuario   Usuario?  @relation(fields: [usuarioId], references: [id])
+  usuarioId Int?
   createdAt DateTime? @default(now())
   updatedAt DateTime? @updatedAt
 }

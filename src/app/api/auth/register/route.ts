@@ -15,7 +15,6 @@ interface RequestBody {
 
 export async function POST(request: Request) {
 	const json: RequestBody = await request.json()
-	console.log(`backend ${JSON.stringify(json)}`)
 
 	const { dni, email, password, confirm_password } = json
 
@@ -35,7 +34,8 @@ export async function POST(request: Request) {
 					"string.email": "El correo no es válido",
 				}),
 			password: Joi.string().required().pattern(new RegExp("^(?=.*[a-z])(?=.*[A-Z]).{8,}$")).messages({
-				"string.empty": "La contraseña es requerida",
+				"any.required": "Contraseña es requerida",
+				"string.empty": "Contraseña está vacia",
 				"string.pattern.base":
 					"La contraseña debe tener al menos 8 caracteres y contener al menos una letra mayúscula",
 			}),
@@ -47,13 +47,10 @@ export async function POST(request: Request) {
 
 		const { error, value } = schema.validate(json)
 
-		console.log(value)
 		if (error) {
-			console.log(error)
 			return new NextResponse(error.message, { status: 400 })
 		}
 		if (!verificarCedula(dni)) {
-			console.log(value?.dni)
 			return new NextResponse("Cedula no valida", { status: 400 })
 		}
 
@@ -62,11 +59,7 @@ export async function POST(request: Request) {
 		})
 
 		const { password, ...result } = user
-		console.log(result)
-		return new NextResponse(JSON.stringify(result), {
-			status: 201,
-			headers: { "Content-Type": "application/json" },
-		})
+		return NextResponse.json(result, { status: 201 })
 	} catch (error: any) {
 		if (error.code === "P2002") {
 			return new NextResponse(`Ya existe usuario registrado`, {

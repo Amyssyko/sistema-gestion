@@ -1,73 +1,86 @@
 "use client"
-import Input from "@/app/components/Input"
-import axios, { AxiosResponse } from "axios"
-import { useRouter } from "next/navigation"
-import { useState } from "react"
+
+import * as React from "react"
+import { Card, Typography, Input, Button, Alert, CardFooter } from "@material-tailwind/react"
+
+import axios, { AxiosResponse, AxiosError } from "axios"
 import { toast } from "react-hot-toast"
-import useError from "@/hooks/useError"
+import { useRouter } from "next/navigation"
+import { useError } from "@/hooks/useError"
+import { verificarCedula } from "udv-ec"
+import Link from "next/link"
 
-interface Registro {
-	dni: string
-	email: string
-	password: string
-	confirmPassword: string
-}
-
-const Page = ({}) => {
+export default function SignUp() {
 	const router = useRouter()
-	const { error, isErrored, handleError, handleNotError } = useError()
 
-	const [formRegistro, setformRegistro] = useState<Registro>({
-		dni: "",
+	const [formValues, setFormValues] = React.useState({
 		email: "",
 		password: "",
-		confirmPassword: "",
+		dni: "",
+		confirm_password: "",
 	})
+	const { myError, isErrored, handleError, resetError } = useError()
 
-	const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>): void => {
+	const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
 		const { name, value } = event.target
-		setformRegistro((prevFormData) => ({ ...prevFormData, [name]: value }))
+		setFormValues((prevState) => ({
+			...prevState,
+			[name]: value,
+		}))
 	}
 
-	const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+	const onSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
 		event.preventDefault()
+		//resetError()
+		const { email, dni, password, confirm_password } = formValues
+		//const formData = new FormData(event.currentTarget)
+		//const email = formData.get("email")
+		//const password = formData.get("password")
+		//const confirmPassword = formData.get("confirm_password")
 
-		const { dni, email, password, confirmPassword } = formRegistro
+		const isEmailEmpty = !email
+		const isDni = !dni
+		const isPasswordEmpty = !password
+		const isconfirmPassword = !confirm_password
+		const doPasswordsMatch = password === confirm_password
 
-		if (email.trim() === "" || password.trim() === "" || password.trim() === "") {
-			handleError("Verifique que todos los campos sean completados.")
-		} else if (password !== confirmPassword) {
-			handleError("Verifique la contraseña")
-		} else {
-			handleNotError()
+		const errorMessage =
+			isEmailEmpty && isPasswordEmpty && doPasswordsMatch
+				? "Verifique que todos los campos sean completados."
+				: isEmailEmpty
+				? "Correo requerido"
+				: isDni
+				? "Cedula requerida"
+				: !verificarCedula(dni)
+				? "Cedula Invalida"
+				: isPasswordEmpty
+				? "Contraseña requerida"
+				: isconfirmPassword
+				? "Contraseña de confirmacion requerida"
+				: !doPasswordsMatch
+				? "Contraseñas no coinciden"
+				: ""
 
-			try {
-				const response: AxiosResponse = await axios.post("/api/register", { dni, email, password })
-				//console.log(response)
-				if (response.status === 201) {
-					console.log("registro creado")
-					toast.success("Registrado", {
-						duration: 4000,
-						position: "top-right",
+		if (errorMessage) {
+			handleError(errorMessage)
+			return
+		}
 
-						// Custom Icon
-						icon: "✅",
+		try {
+			const response: AxiosResponse = await axios.post("/api/auth/register", {
+				email,
+				dni,
+				password,
+				confirm_password,
+			})
 
-						// Change colors of success/error/loading icon
-						iconTheme: {
-							primary: "#000",
-							secondary: "#fff",
-						},
-					})
-				}
-				//router.push("/auth/login")
-			} catch (error: any) {
-				toast.error(error.response.data, {
-					duration: 4000,
-					position: "top-right",
+			if (response.status === 201) {
+				toast.success("Usuario registrado con éxito", {
+					duration: 3000,
+					position: "top-left",
 
 					// Custom Icon
-					icon: "❌",
+					icon: "✅",
 
 					// Change colors of success/error/loading icon
 					iconTheme: {
@@ -75,99 +88,117 @@ const Page = ({}) => {
 						secondary: "#fff",
 					},
 				})
-				if (error.response) {
-					switch (error.response.status) {
-						case 400:
-						case 409:
-							console.log(`Error: ${error.response.data} (${error.response.status})`)
-							break
-						case 500:
-							console.log(`Error en el servidor (${error.response.status})`)
-							break
-						default:
-							console.log(`Error desconocido (${error.response.status})`)
-					}
-				} else if (error.request) {
-					console.log(`Error de solicitud (${error.request.status})`)
-				} else {
-					console.log(`Error desconocido: ${error.message}`)
-				}
 			}
+			router.replace("/auth/login")
+		} catch (error: Error | AxiosError | any) {
+			console.error(error)
+			handleError(error.response.data)
+			setFormValues({
+				email: "",
+				dni: "",
+				password: "",
+				confirm_password: "",
+			})
+
+			console.error(`${error.response.data} (${error.response.status})`)
+			if (error.response && error.response.status) {
+				toast.error(error.response.data, {
+					duration: 3000,
+					position: "top-left",
+					icon: "❌",
+					iconTheme: {
+						primary: "#000",
+						secondary: "#fff",
+					},
+				})
+			}
+
+			router.refresh()
+			//resetError()
 		}
 	}
 
 	return (
-		<>
-			<div className="flex flex-col items-center min-h-screen pt-6 sm:justify-center sm:pt-0 bg-gray-50 dark:bg-gray-950">
-				<div>
-					<a href="/">
-						<h3 className="text-4xl font-bold text-sky-600">Logo</h3>
-					</a>
+		<div
+			className="bg-cover bg-center flex justify-center items-center w-full h-screen"
+			style={{
+				backgroundImage: "url(https://cdn.pixabay.com/photo/2014/09/04/15/35/collective-435584_1280.jpg)",
+				backgroundRepeat: "no-repeat",
+				backgroundSize: "cover",
+				backgroundPosition: "center",
+			}}
+		>
+			<Card className="w-full max-w-[36rem] content-center">
+				<div className="text-center my-12">
+					<Typography variant="h3" color="blue">
+						Registro
+					</Typography>
+					<Typography color="gray" className="mt-1 font-normal">
+						Ingrese sus datos
+					</Typography>
 				</div>
-				<div className="w-full px-6 py-4 mt-6 overflow-hidden bg-white shadow-md sm:max-w-lg sm:rounded-lg">
-					<form onSubmit={handleSubmit}>
+				<form onSubmit={onSubmit} className="flex flex-col gap-4 border mx-24">
+					<div className="mb-4 flex flex-col gap-6  ">
 						<Input
-							type={"email"}
-							id={"email"}
-							name={"email"}
-							label={"Correo"}
-							placeholder={"email@example.com"}
+							size="lg"
+							name="email"
+							id="email"
+							label="Email"
+							type="text"
+							value={formValues.email}
 							onChange={handleInputChange}
-							value={formRegistro.email}
 						/>
 						<Input
-							type={"text"}
-							name={"dni"}
-							id={"dni"}
-							label={"Cedula:"}
-							placeholder={"1700236521"}
-							value={formRegistro.dni}
+							size="lg"
+							name="dni"
+							id="dni"
+							label="Cedula"
+							type="text"
+							value={formValues.dni}
 							onChange={handleInputChange}
-							//maxLength={10}
-							//minLength={10}
 						/>
 						<Input
-							type={"password"}
-							id={"password"}
-							name={"password"}
-							label={"Contraseña"}
-							placeholder={"********"}
+							type="password"
+							name="password"
+							id="password"
+							size="lg"
+							label="Contraseña"
+							value={formValues.password}
 							onChange={handleInputChange}
-							value={formRegistro.password}
 						/>
-
 						<Input
-							type={"password"}
-							id={"confirmPassword"}
-							name={"confirmPassword"}
-							label={"Verificar contraseña"}
-							placeholder={"********"}
+							type="password"
+							name="confirm_password"
+							id="confirm_password"
+							size="lg"
+							label="Confirmar Contraseña"
+							value={formValues.confirm_password}
 							onChange={handleInputChange}
-							value={formRegistro.confirmPassword}
 						/>
-						{isErrored && <p className="text-red-800 text-xs">{error?.message}</p>}
-
-						<div className="flex items-center mt-4">
-							<button
-								type="submit"
-								className="w-full px-4 mx-24 py-2 tracking-wide text-white transition-colors duration-200 transform bg-sky-700 rounded-md hover:bg-sky-600 focus:outline-none focus:bg-sky-600"
-							>
-								Registrar
-							</button>
-						</div>
-					</form>
-					<div className="mt-4 text-grey-600">
-						Ya tienes una cuenta?
-						<span>
-							<a className="text-sky-600 hover:text-sky-800  hover:underline ml-1" href="/auth/login">
-								Iniciar Sesión
-							</a>
-						</span>
 					</div>
-				</div>
-			</div>
-		</>
+					<div>
+						{isErrored && (
+							<Alert color="orange" variant="ghost" className=" text-sm">
+								{myError?.message}
+							</Alert>
+						)}
+					</div>
+					<Button type="submit" className="mt-4" fullWidth>
+						Registrar
+					</Button>
+
+					<CardFooter className="pt-0 flex justify-items-center flex-col">
+						<Typography variant="small" className="mt-2 flex justify-center">
+							¿Ya tienes una cuenta?
+							<Link href="/auth/login">
+								<Typography as="span" variant="small" color="blue" className="ml-1 font-bold">
+									Inicia Sesion
+								</Typography>
+							</Link>
+						</Typography>
+					</CardFooter>
+				</form>
+			</Card>
+		</div>
 	)
 }
-
-export default Page

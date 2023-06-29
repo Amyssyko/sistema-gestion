@@ -34,14 +34,14 @@ const Sidebar: React.FC = () => {
 	const activeMenu = useMemo(() => menuItems.find((menu) => menu.link === router.pathname), [router.pathname])
 
 	const wrapperClasses = classNames(
-		"min-h-screen px-2 pt-8 pb-4 bg-light flex justify-between flex-col bg-sky-700 dark:bg-sky-950 text-orange-50",
+		"min-h-screen px-2 pt-8 pb-4 bg-light flex justify-between flex-col text-black/10",
 		{
 			["w-56"]: !toggleCollapse,
 			["w-18"]: toggleCollapse,
 		}
 	)
 	// desplazar botonm
-	const collapseIconClasses = classNames("p-4 rounded bg-light-lighter absolute right-0", {
+	const collapseIconClasses = classNames("p-4 rounded bg-black/10 absolute right-0", {
 		"rotate-180": toggleCollapse,
 	})
 
@@ -102,7 +102,7 @@ const Sidebar: React.FC = () => {
 					)}
 				</div>
 
-				<div className="flex flex-col items-start mt-36">
+				<div className="flex flex-col items-start">
 					{menuItems.map(({ icon: Icon, ...menu }) => {
 						const classes = getNavItemClasses(menu)
 						return (

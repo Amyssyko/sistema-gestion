@@ -15,7 +15,6 @@ export const metadata = {
 const Home = () => {
 	const { data: session } = useSession()
 	const { dni } = session?.user || {}
-	console.log(session?.user)
 	return (
 		<>
 			<GlobalProvider>
