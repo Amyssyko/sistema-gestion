@@ -19,7 +19,6 @@ interface FormData {
 	nombre: string
 	apellido: string
 	email: string
-	password: string
 }
 
 const FormRol: React.FC<Data> = ({ id }) => {
@@ -31,7 +30,6 @@ const FormRol: React.FC<Data> = ({ id }) => {
 		nombre: "",
 		apellido: "",
 		email: "",
-		password: "",
 	})
 
 	const { myError, handleError, isErrored, resetError } = useError()
@@ -64,7 +62,6 @@ const FormRol: React.FC<Data> = ({ id }) => {
 					nombre: data.nombre,
 					apellido: data.apellido,
 					email: data.email,
-					password: data.password,
 				})
 				setRole(data.role)
 			} catch (error) {
@@ -78,7 +75,7 @@ const FormRol: React.FC<Data> = ({ id }) => {
 
 	const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
 		event.preventDefault()
-		const { dni, nombre, apellido, email, password } = formData
+		const { dni, nombre, apellido, email } = formData
 
 		if (!id) {
 			try {
@@ -87,7 +84,6 @@ const FormRol: React.FC<Data> = ({ id }) => {
 					nombre,
 					apellido,
 					email,
-					password,
 					role,
 				})
 				if (response.status === 200) {
@@ -108,7 +104,6 @@ const FormRol: React.FC<Data> = ({ id }) => {
 					nombre: "",
 					apellido: "",
 					email: "",
-					password: "",
 				})
 				setRole("")
 				console.error(`${error.response.data} (${error.response.status})`)
@@ -133,7 +128,6 @@ const FormRol: React.FC<Data> = ({ id }) => {
 				nombre,
 				apellido,
 				email,
-				password,
 				role,
 			})
 			if (response.status === 200) {
@@ -220,17 +214,6 @@ const FormRol: React.FC<Data> = ({ id }) => {
 						id={"email"}
 						label={"Correo"}
 						value={formData.email}
-						onChange={handleInputChange}
-					/>
-
-					<Input
-						disabled
-						size="md"
-						type={"text"}
-						name={"password"}
-						id={"password"}
-						label={"Contraseña"}
-						value={formData.password}
 						onChange={handleInputChange}
 					/>
 

@@ -21,7 +21,7 @@ export async function GET(request: Request) {
 export async function POST(request: Request) {
 	const json = await request.json()
 
-	const { dni, role, nombre, apellido, email, password, telefono, provincia, ciudad, calle } = json
+	const { dni, role, nombre, apellido, email, telefono, provincia, ciudad, calle } = json
 	try {
 		const schema = Joi.object({
 			dni: Joi.string().required().min(10).max(10).messages({
@@ -55,11 +55,6 @@ export async function POST(request: Request) {
 					"string.empty": "El email está vacio",
 					"string.email": "El email no es válido",
 				}),
-			password: Joi.string().required().messages({
-				"any.required": "La contraseña requerida",
-				"string.base": "La contraseña tiene que ser solo letras, numeros y caracteres",
-				"string.empty": "La contraseña está vacio",
-			}),
 			telefono: Joi.string().required().min(10).min(10).messages({
 				"any.required": "El telefono es requerido",
 				"string.base": "El telefono debe ser solo números",
@@ -90,7 +85,6 @@ export async function POST(request: Request) {
 			nombre,
 			apellido,
 			email,
-			password,
 			telefono,
 			provincia,
 			ciudad,
@@ -111,7 +105,6 @@ export async function POST(request: Request) {
 				nombre,
 				apellido,
 				email,
-				password: await bcrypt.hash(json.password, 10),
 				telefono,
 				provincia,
 				ciudad,

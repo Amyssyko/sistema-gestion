@@ -34,11 +34,13 @@ export default function SidebarAdmin() {
 		<Card className="fixed top-14 left-2 h-[calc(100vh-11rem)] w-60 sm:w-60 md:w-60 lg:w-60 xl:w-60 2xl:w-60 p-2  ">
 			<div className="mb-2 flex items-center gap-4 p-4">
 				<Avatar src="https://source.unsplash.com/random?wallpapers" alt="brand" className="h-8 w-8" />
-				<Typography variant="h5" color="gray">
-					{session?.user.nombre && session?.user.apellido
-						? ` Bienvenido ${session?.user.nombre} ${session?.user.apellido} `
-						: "Bienvenido"}
-				</Typography>
+				<Link href={"/"}>
+					<Typography variant="span" color="gray">
+						{session?.user.nombre && session?.user.apellido
+							? ` Bienvenido ${session?.user.nombre} ${session?.user.apellido} `
+							: "Bienvenido"}
+					</Typography>
+				</Link>
 			</div>
 			<List>
 				<Accordion

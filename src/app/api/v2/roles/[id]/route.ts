@@ -19,7 +19,7 @@ export async function PATCH(request: Request, { params }: { params: { id: string
 	const id = Number(params.id)
 
 	const json = await request.json()
-	const { dni, nombre, apellido, email, password, telefono, provincia, ciudad, calle } = json
+	const { dni, nombre, apellido, email, telefono, provincia, ciudad, calle } = json
 	const rol = json.role
 
 	try {
@@ -55,11 +55,7 @@ export async function PATCH(request: Request, { params }: { params: { id: string
 					"string.empty": "El email está vacio",
 					"string.email": "El email no es válido",
 				}),
-			password: Joi.string().required().messages({
-				"any.required": "La contraseña requerida",
-				"string.base": "La contraseña tiene que ser solo letras, numeros y caracteres",
-				"string.empty": "La contraseña está vacio",
-			}),
+
 			telefono: Joi.string().required().min(10).min(10).messages({
 				"any.required": "El telefono es requerido",
 				"string.base": "El telefono debe ser solo números",
@@ -98,7 +94,6 @@ export async function PATCH(request: Request, { params }: { params: { id: string
 				nombre,
 				apellido,
 				email,
-				password: await bcrypt.hash(json.password, 10),
 				telefono,
 				provincia,
 				ciudad,
