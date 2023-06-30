@@ -9,8 +9,10 @@ interface RequestBody {
 }
 
 export async function POST(request: Request) {
+	const json = await request.json()
+	const { email, password } = json
+	console.log(json)
 	try {
-		const { email, password }: RequestBody = await request.json()
 		const schema = Joi.object({
 			email: Joi.string().email().required().messages({
 				"string.empty": "El correo es requerido",
@@ -22,7 +24,7 @@ export async function POST(request: Request) {
 
 		const { error } = schema.validate({ email, password })
 		if (error) {
-			return new NextResponse(error.details[0].message, { status: 401 })
+			return new NextResponse(error.message, { status: 401 })
 		}
 		const data = await prisma.usuario.findUnique({
 			where: { email },
@@ -30,12 +32,15 @@ export async function POST(request: Request) {
 
 		if (data && (await bcrypt.compare(password, data.password))) {
 			//Desectroctura los datos
+			console.log(data)
 			const { password, createdAt, updatedAt, ...userWithoutPerson } = data
 
 			const accessToken = signJwtAccessToken(userWithoutPerson)
 			const result = { ...userWithoutPerson, accessToken }
+			console.log(result)
 			return new Response(JSON.stringify(result), { status: 201 })
 		} else {
+			console.log("first")
 			return new Response(JSON.stringify("Credenciales inválidas"), { status: 401 })
 		}
 	} catch (error: any) {

@@ -54,7 +54,7 @@ const Page = () => {
 			redirect: false,
 			callbackUrl: "/",
 		})
-
+		console.log(result)
 		if (result?.error === "CredentialsSignin") {
 			setFormValues({
 				email: "",
