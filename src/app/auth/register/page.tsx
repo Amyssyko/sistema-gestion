@@ -73,7 +73,7 @@ export default function SignUp() {
 				password,
 				confirm_password,
 			})
-
+			console.log(response)
 			if (response.status === 201) {
 				toast.success("Usuario registrado con éxito", {
 					duration: 3000,
