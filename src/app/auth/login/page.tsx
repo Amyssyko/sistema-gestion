@@ -9,6 +9,7 @@ import { error } from "console"
 import React from "react"
 import Link from "next/link"
 import { LayoutHome } from "@/components/Layout/LayoutHome"
+import { env } from "process"
 
 const Page = () => {
 	const router = useRouter()
@@ -53,9 +54,10 @@ const Page = () => {
 			email,
 			password,
 			redirect: false,
-			callbackUrl: "/",
+			callbackUrl: env.NEXTAUTH_URL,
 		})
 
+		console.log(result)
 		if (result?.error === "CredentialsSignin") {
 			setFormValues({
 				email: "",
