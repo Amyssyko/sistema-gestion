@@ -144,7 +144,7 @@ const FromTransaccion: React.FC<Data> = ({ id }) => {
 			router.refresh()
 		}
 	}
-	const handleUpdate = async () => {
+	const handleUpdate = async (event: any) => {
 		setFormData((prevFormData) => ({
 			...prevFormData,
 			tipo: selectTipo,

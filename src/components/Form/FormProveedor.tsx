@@ -95,7 +95,7 @@ const FormBus: React.FC<Data> = ({ id }) => {
 		router.refresh()
 	}
 
-	const handleUpdate = async (event: React.FormEvent<HTMLFormElement>) => {
+	const handleUpdate = async (event: any) => {
 		event.preventDefault()
 
 		const { nombre, telefono, email, direccion } = formData

@@ -8,7 +8,6 @@ import React from "react"
 
 function Page() {
 	const { data: session } = useSession()
-
 	if (session?.user?.role === undefined) {
 		return <Loading />
 	}

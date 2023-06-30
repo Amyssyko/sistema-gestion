@@ -21,7 +21,7 @@ import Link from "next/link"
 
 export default function SidebarAdmin() {
 	const router = useRouter()
-	const { data } = useSession()
+	const { data: session } = useSession()
 
 	const [open, setOpen] = React.useState(0)
 	const [openAlert, setOpenAlert] = React.useState(true)
@@ -35,8 +35,8 @@ export default function SidebarAdmin() {
 			<div className="mb-2 flex items-center gap-4 p-4">
 				<Avatar src="https://source.unsplash.com/random?wallpapers" alt="brand" className="h-8 w-8" />
 				<Typography variant="h5" color="gray">
-					{data?.user.nombre && data?.user.apellido
-						? `${data?.user.nombre} ${data?.user.apellido}`
+					{session?.user.nombre && session?.user.apellido
+						? `${session?.user.nombre} ${session?.user.apellido}`
 						: "Bienvenido"}
 				</Typography>
 			</div>

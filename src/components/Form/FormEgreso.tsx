@@ -140,7 +140,7 @@ const FormIngreso: React.FC<Data> = ({ id }) => {
 		router.refresh()
 	}
 
-	const handleUpdate = async (event: React.FormEvent<HTMLFormElement>) => {
+	const handleUpdate = async (event: any) => {
 		event.preventDefault()
 
 		const { fecha, descripcion, monto } = formData

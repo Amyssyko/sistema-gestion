@@ -7,14 +7,12 @@ import TransactionList from "@/components/transactions/TransactionList"
 import { GlobalProvider } from "../context/GlobalState"
 import { useSession } from "next-auth/react"
 
-export const metadata = {
+/**export const metadata = {
 	title: "Sistema Gestion de transporte de Turismo",
 	description: "App de Gestion",
-}
+} */
 
 const Home = () => {
-	const { data: session } = useSession()
-	const { dni } = session?.user || {}
 	return (
 		<>
 			<GlobalProvider>
