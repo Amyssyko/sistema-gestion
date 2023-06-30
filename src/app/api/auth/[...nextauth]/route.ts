@@ -1,5 +1,6 @@
 import NextAuth from "next-auth/next"
 import CredentialsProvider from "next-auth/providers/credentials"
+import { env } from "process"
 const handler = NextAuth({
 	pages: {
 		signIn: "/auth/login",
@@ -21,7 +22,8 @@ const handler = NextAuth({
 			},
 			async authorize(credentials, req) {
 				// Add logic here to look up the user from the credentials supplied
-				const res = await fetch("http://localhost:3000/api/auth/login", {
+
+				const res = await fetch(`${env.NEXTAUTH_URL}/api/auth/login`, {
 					method: "POST",
 					body: JSON.stringify({
 						email: credentials?.email,
