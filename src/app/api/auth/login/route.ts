@@ -11,7 +11,6 @@ interface RequestBody {
 export async function POST(request: Request) {
 	const json = await request.json()
 	const { email, password } = json
-	console.log(json)
 	try {
 		const schema = Joi.object({
 			email: Joi.string().email().required().messages({
@@ -32,15 +31,13 @@ export async function POST(request: Request) {
 
 		if (data && (await bcrypt.compare(password, data.password))) {
 			//Desectroctura los datos
-			console.log(data)
 			const { password, createdAt, updatedAt, ...userWithoutPerson } = data
 
 			const accessToken = signJwtAccessToken(userWithoutPerson)
 			const result = { ...userWithoutPerson, accessToken }
-			console.log(result)
+
 			return new Response(JSON.stringify(result), { status: 201 })
 		} else {
-			console.log("first")
 			return new Response(JSON.stringify("Credenciales inválidas"), { status: 401 })
 		}
 	} catch (error: any) {

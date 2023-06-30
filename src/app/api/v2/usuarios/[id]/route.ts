@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server"
-import Joi from "joi"
+import Joi, { object } from "joi"
 import { verificarCedula } from "udv-ec"
 import prisma from "@/lib/prisma"
 
@@ -18,7 +18,8 @@ export async function PATCH(request: Request, { params }: { params: { id: string
 	const id = Number(params.id)
 
 	let json = await request.json()
-	const { dni, nombre, apellido, email, telefono, provincia, ciudad, calle, busPlaca } = json
+	const { dni, nombre, apellido, email, telefono, provincia, ciudad, calle } = json
+	const busPlaca = json.busPlaca.toString()
 	const schema = Joi.object({
 		dni: Joi.string().required().min(10).max(10).messages({
 			"any.required": "Cedula es requerida",
@@ -69,10 +70,9 @@ export async function PATCH(request: Request, { params }: { params: { id: string
 			"string.empty": "La dirección está vacio",
 		}),
 		busPlaca: Joi.string()
-			.pattern(new RegExp(/[A-C,E,G-Z]{1}[A]{1}[A-Z]{1}\d{4}/))
-			.required()
-			.min(7)
-			.max(7)
+			//.pattern(new RegExp(/[A-C,E,G-Z]{1}[A]{1}[A-Z]{1}\d{4}/))
+			//.min(7)
+			//.max(7)
 			.messages({
 				"string.pattern.base": "La matricula no valida",
 				"any.required": "La matricula es requerido",
@@ -92,16 +92,26 @@ export async function PATCH(request: Request, { params }: { params: { id: string
 	}
 
 	try {
-		const updateUser = await prisma.usuario.update({
-			where: { id },
-			data: { dni, nombre, apellido, email, telefono, provincia, ciudad, calle, busPlaca },
-		})
-		const { role, password, createdAt, updatedAt, ...userWithoutPerson } = updateUser
-		return NextResponse.json(userWithoutPerson, { status: 200 })
+		if (busPlaca.length === 1) {
+			const updateUser = await prisma.usuario.update({
+				where: { id },
+				data: { dni, nombre, apellido, email, telefono, provincia, ciudad, calle, busPlaca: null },
+			})
+			const { role, password, createdAt, updatedAt, ...userWithoutPerson } = updateUser
+			return NextResponse.json(userWithoutPerson, { status: 200 })
+		}
+		if (busPlaca.length > 1) {
+			const updateUser = await prisma.usuario.update({
+				where: { id },
+				data: { dni, nombre, apellido, email, telefono, provincia, ciudad, calle, busPlaca },
+			})
+			const { role, password, createdAt, updatedAt, ...userWithoutPerson } = updateUser
+			return NextResponse.json(userWithoutPerson, { status: 200 })
+		}
 	} catch (error: any) {
 		//Si ya existe email en otra cuenta
 		if (error.code === "P2002") {
-			return new NextResponse(`Ya existe  el email ${email}`, { status: 409 })
+			return new NextResponse(`Ya existe se encuentra en uso ${busPlaca}`, { status: 409 })
 		}
 		// si no encuentra id
 		if (error.code === "P2025") {

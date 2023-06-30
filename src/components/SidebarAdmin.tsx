@@ -36,7 +36,7 @@ export default function SidebarAdmin() {
 				<Avatar src="https://source.unsplash.com/random?wallpapers" alt="brand" className="h-8 w-8" />
 				<Typography variant="h5" color="gray">
 					{session?.user.nombre && session?.user.apellido
-						? `${session?.user.nombre} ${session?.user.apellido}`
+						? ` Bienvenido ${session?.user.nombre} ${session?.user.apellido} `
 						: "Bienvenido"}
 				</Typography>
 			</div>
@@ -311,17 +311,14 @@ export default function SidebarAdmin() {
 					</ListItem>
 					<AccordionBody className="py-1">
 						<List className="p-0">
-							<ListItem
-								className="text-xs hover:bg-blue-800 rounded-md shadow-xl bg-blue-300 "
-								onClick={() => {
-									router.replace("/dashboard/lista-roles")
-								}}
-							>
-								<ListItemPrefix>
-									<ChevronRightIcon strokeWidth={3} className="h-3 w-5" />
-								</ListItemPrefix>
-								Lista de Administradores
-							</ListItem>
+							<Link href={"/dashboard/lista/roles"}>
+								<ListItem className="text-xs hover:bg-blue-800 rounded-md shadow-xl bg-blue-300 ">
+									<ListItemPrefix>
+										<ChevronRightIcon strokeWidth={3} className="h-3 w-5" />
+									</ListItemPrefix>
+									Lista de Administradores
+								</ListItem>
+							</Link>
 						</List>
 					</AccordionBody>
 				</Accordion>

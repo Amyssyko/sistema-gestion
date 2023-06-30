@@ -1,6 +1,6 @@
 "use client"
 import { useError } from "@/hooks/useError"
-import { Input, Card, Typography, Button } from "@material-tailwind/react"
+import { Input, Card, Typography, Button, Select, Option } from "@material-tailwind/react"
 import axios, { AxiosError, AxiosResponse } from "axios"
 import { useRouter } from "next/navigation"
 import React, { useState, useEffect, ChangeEvent } from "react"
@@ -20,25 +20,18 @@ interface FormData {
 	apellido: string
 	email: string
 	password: string
-	telefono: string
-	provincia: string
-	ciudad: string
-	calle: string
 }
 
-const FormChofer: React.FC<Data> = ({ id }) => {
-	const [buses, setBuses] = useState([])
-	const [busPlaca, setBusPlaca] = useState("")
+const FormRol: React.FC<Data> = ({ id }) => {
+	const [roles, setRoles] = useState([])
+
+	const [role, setRole] = useState("")
 	const [formData, setFormData] = useState<FormData>({
 		dni: "",
 		nombre: "",
 		apellido: "",
 		email: "",
 		password: "",
-		telefono: "",
-		provincia: "",
-		ciudad: "",
-		calle: "",
 	})
 
 	const { myError, handleError, isErrored, resetError } = useError()
@@ -48,16 +41,13 @@ const FormChofer: React.FC<Data> = ({ id }) => {
 		setFormData((prevFormData) => ({ ...prevFormData, [name]: value }))
 	}
 
-	const handleSelectChange = (event: ChangeEvent<HTMLSelectElement>) => {
-		setBusPlaca(event.target.value)
-	}
 	useEffect(() => {
 		const fetchPets = async () => {
 			try {
-				const response = await axios.get("/api/v2/buses")
-				setBuses(response.data)
+				const response = await axios.get("/api/v2/roles")
+				setRoles(response.data)
 			} catch (error) {
-				console.error("Error fetching buses:", error)
+				console.error("Error fetching roles:", error)
 			}
 		}
 
@@ -68,19 +58,15 @@ const FormChofer: React.FC<Data> = ({ id }) => {
 	useEffect(() => {
 		const getChoferData = async () => {
 			try {
-				const { data } = await axios.get(`/api/v2/usuarios/${id}`)
+				const { data } = await axios.get(`/api/v2/roles/${id}`)
 				setFormData({
 					dni: data.dni,
 					nombre: data.nombre,
 					apellido: data.apellido,
 					email: data.email,
 					password: data.password,
-					telefono: data.telefono,
-					provincia: data.provincia,
-					ciudad: data.ciudad,
-					calle: data.calle,
 				})
-				setBusPlaca(data.busPlaca)
+				setRole(data.role)
 			} catch (error) {
 				console.error(error)
 			}
@@ -92,7 +78,7 @@ const FormChofer: React.FC<Data> = ({ id }) => {
 
 	const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
 		event.preventDefault()
-		const { dni, nombre, apellido, email, password, telefono, provincia, ciudad, calle } = formData
+		const { dni, nombre, apellido, email, password } = formData
 
 		if (!id) {
 			try {
@@ -102,11 +88,7 @@ const FormChofer: React.FC<Data> = ({ id }) => {
 					apellido,
 					email,
 					password,
-					telefono,
-					provincia,
-					ciudad,
-					calle,
-					busPlaca,
+					role,
 				})
 				if (response.status === 200) {
 					toast.success("Registro Creado", {
@@ -127,12 +109,8 @@ const FormChofer: React.FC<Data> = ({ id }) => {
 					apellido: "",
 					email: "",
 					password: "",
-					telefono: "",
-					provincia: "",
-					ciudad: "",
-					calle: "",
 				})
-				setBusPlaca("")
+				setRole("")
 				console.error(`${error.response.data} (${error.response.status})`)
 				if (error.response && error.response.status) {
 					toast.error(error.response.data, {
@@ -147,22 +125,17 @@ const FormChofer: React.FC<Data> = ({ id }) => {
 				}
 			}
 			router.refresh()
-			router.replace("/dashboard/lista/usuarios")
 		}
 
 		try {
-			const response: AxiosResponse = await axios.patch(`/api/v2/usuarios/${id}`, {
+			const response: AxiosResponse = await axios.patch(`/api/v2/roles/${id}`, {
 				dni,
 				nombre,
 				apellido,
 				email,
-				telefono,
-				provincia,
-				ciudad,
-				calle,
-				busPlaca,
+				password,
+				role,
 			})
-
 			if (response.status === 200) {
 				toast.success("Registro Actualizado", {
 					duration: 4000,
@@ -178,7 +151,7 @@ const FormChofer: React.FC<Data> = ({ id }) => {
 					},
 				})
 			}
-			router.push("/dashboard/lista/usuarios")
+			router.push("/dashboard/lista/roles")
 		} catch (error: Error | AxiosError | any) {
 			console.error(`${error.response.data} (${error.response.status})`)
 			if (error.response && error.response.status) {
@@ -193,22 +166,21 @@ const FormChofer: React.FC<Data> = ({ id }) => {
 					},
 				})
 			}
-			router.refresh()
-			router.replace("/dashboard/lista/usuarios")
 		}
 	}
 
 	return (
 		<Card color="transparent" shadow={false} className="mx-auto my-12">
 			<Typography variant="h4" color="blue-gray" className="mx-auto font-normal">
-				Registro de Choferes
+				Registro de Roles
 			</Typography>
 			<Typography color="gray" className="mx-auto font-normal">
-				Ingrese los detalles del chofer a registrar
+				Ingrese los detalles de Roles
 			</Typography>
 			<form onSubmit={handleSubmit} className="mt-8 mb-2 w-80 max-w-screen-lg sm:w-96 mx-auto">
 				<div className="mb-4 flex flex-col gap-6">
 					<Input
+						disabled
 						size="md"
 						type={"text"}
 						name={"dni"}
@@ -219,6 +191,7 @@ const FormChofer: React.FC<Data> = ({ id }) => {
 					/>
 
 					<Input
+						disabled
 						size="md"
 						type={"text"}
 						name={"nombre"}
@@ -229,6 +202,7 @@ const FormChofer: React.FC<Data> = ({ id }) => {
 					/>
 
 					<Input
+						disabled
 						size="md"
 						type={"text"}
 						name={"apellido"}
@@ -239,6 +213,7 @@ const FormChofer: React.FC<Data> = ({ id }) => {
 					/>
 
 					<Input
+						disabled
 						size="md"
 						type={"email"}
 						name={"email"}
@@ -249,6 +224,7 @@ const FormChofer: React.FC<Data> = ({ id }) => {
 					/>
 
 					<Input
+						disabled
 						size="md"
 						type={"text"}
 						name={"password"}
@@ -258,62 +234,11 @@ const FormChofer: React.FC<Data> = ({ id }) => {
 						onChange={handleInputChange}
 					/>
 
-					<Input
-						size="md"
-						type={"tel"}
-						name={"telefono"}
-						id={"telefono"}
-						maxLength={10}
-						label={"Telefono"}
-						value={formData.telefono}
-						onChange={handleInputChange}
-					/>
-
-					<Input
-						size="md"
-						type={"text"}
-						name={"provincia"}
-						id={"provincia"}
-						label={"Provincia"}
-						value={formData.provincia}
-						onChange={handleInputChange}
-					/>
-
-					<Input
-						size="md"
-						type={"text"}
-						name={"ciudad"}
-						id={"ciudad"}
-						label={"Ciudad"}
-						value={formData.ciudad}
-						onChange={handleInputChange}
-					/>
-
-					<Input
-						size="md"
-						type={"text"}
-						name={"calle"}
-						id={"calle"}
-						label={"Dirreción"}
-						value={formData.calle}
-						minLength={3}
-						maxLength={50}
-						onChange={handleInputChange}
-					/>
-
-					<label className="-mb-6 -mt-5 text-xs ml-3 text-gray-500">Bus</label>
-					<select
-						className="border border-gray-400 hover:bg-white hover:text-gray-400 text-gray-700 px-4 py-2 rounded-md"
-						value={busPlaca}
-						onChange={handleSelectChange}
-					>
-						<option value=" ">Selecione Bus</option>
-						{buses.map(({ placa }) => (
-							<option key={placa} value={placa}>
-								{placa}
-							</option>
-						))}
-					</select>
+					<Select label="Roles" name="role" id="role" value={role} onChange={(e) => setRole(e)}>
+						<Option value=""> Seleccione un Rol</Option>
+						<Option value="admin"> admin</Option>
+						<Option value="empleado"> empleado</Option>
+					</Select>
 				</div>
 
 				{id ? (
@@ -337,4 +262,4 @@ const FormChofer: React.FC<Data> = ({ id }) => {
 	)
 }
 
-export default FormChofer
+export default FormRol

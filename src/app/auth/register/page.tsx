@@ -9,6 +9,7 @@ import { useRouter } from "next/navigation"
 import { useError } from "@/hooks/useError"
 import { verificarCedula } from "udv-ec"
 import Link from "next/link"
+import { LayoutHome } from "@/components/Layout/LayoutHome"
 
 export default function SignUp() {
 	const router = useRouter()
@@ -73,7 +74,7 @@ export default function SignUp() {
 				password,
 				confirm_password,
 			})
-			console.log(response)
+
 			if (response.status === 201) {
 				toast.success("Usuario registrado con éxito", {
 					duration: 3000,
@@ -119,86 +120,88 @@ export default function SignUp() {
 	}
 
 	return (
-		<div
-			className="bg-cover bg-center flex justify-center items-center w-full h-screen"
-			style={{
-				backgroundImage: "url(https://cdn.pixabay.com/photo/2014/09/04/15/35/collective-435584_1280.jpg)",
-				backgroundRepeat: "no-repeat",
-				backgroundSize: "cover",
-				backgroundPosition: "center",
-			}}
-		>
-			<Card className="w-full max-w-[36rem] content-center">
-				<div className="text-center my-12">
-					<Typography variant="h3" color="blue">
-						Registro
-					</Typography>
-					<Typography color="gray" className="mt-1 font-normal">
-						Ingrese sus datos
-					</Typography>
-				</div>
-				<form onSubmit={onSubmit} className="flex flex-col gap-4 border mx-24">
-					<div className="mb-4 flex flex-col gap-6  ">
-						<Input
-							size="lg"
-							name="email"
-							id="email"
-							label="Email"
-							type="text"
-							value={formValues.email}
-							onChange={handleInputChange}
-						/>
-						<Input
-							size="lg"
-							name="dni"
-							id="dni"
-							label="Cedula"
-							type="text"
-							value={formValues.dni}
-							onChange={handleInputChange}
-						/>
-						<Input
-							type="password"
-							name="password"
-							id="password"
-							size="lg"
-							label="Contraseña"
-							value={formValues.password}
-							onChange={handleInputChange}
-						/>
-						<Input
-							type="password"
-							name="confirm_password"
-							id="confirm_password"
-							size="lg"
-							label="Confirmar Contraseña"
-							value={formValues.confirm_password}
-							onChange={handleInputChange}
-						/>
-					</div>
-					<div>
-						{isErrored && (
-							<Alert color="orange" variant="ghost" className=" text-sm">
-								{myError?.message}
-							</Alert>
-						)}
-					</div>
-					<Button type="submit" className="mt-4" fullWidth>
-						Registrar
-					</Button>
-
-					<CardFooter className="pt-0 flex justify-items-center flex-col">
-						<Typography variant="small" className="mt-2 flex justify-center">
-							¿Ya tienes una cuenta?
-							<Link href="/auth/login">
-								<Typography as="span" variant="small" color="blue" className="ml-1 font-bold">
-									Inicia Sesion
-								</Typography>
-							</Link>
+		<LayoutHome>
+			<div
+				className="bg-cover bg-center flex justify-center items-center w-full h-screen"
+				style={{
+					backgroundImage: "url(https://cdn.pixabay.com/photo/2014/09/04/15/35/collective-435584_1280.jpg)",
+					backgroundRepeat: "no-repeat",
+					backgroundSize: "cover",
+					backgroundPosition: "center",
+				}}
+			>
+				<Card className="w-full max-w-[36rem] content-center">
+					<div className="text-center my-12">
+						<Typography variant="h3" color="blue">
+							Registro
 						</Typography>
-					</CardFooter>
-				</form>
-			</Card>
-		</div>
+						<Typography color="gray" className="mt-1 font-normal">
+							Ingrese sus datos
+						</Typography>
+					</div>
+					<form onSubmit={onSubmit} className="flex flex-col gap-4 border mx-24">
+						<div className="mb-4 flex flex-col gap-6  ">
+							<Input
+								size="lg"
+								name="email"
+								id="email"
+								label="Email"
+								type="text"
+								value={formValues.email}
+								onChange={handleInputChange}
+							/>
+							<Input
+								size="lg"
+								name="dni"
+								id="dni"
+								label="Cedula"
+								type="text"
+								value={formValues.dni}
+								onChange={handleInputChange}
+							/>
+							<Input
+								type="password"
+								name="password"
+								id="password"
+								size="lg"
+								label="Contraseña"
+								value={formValues.password}
+								onChange={handleInputChange}
+							/>
+							<Input
+								type="password"
+								name="confirm_password"
+								id="confirm_password"
+								size="lg"
+								label="Confirmar Contraseña"
+								value={formValues.confirm_password}
+								onChange={handleInputChange}
+							/>
+						</div>
+						<div>
+							{isErrored && (
+								<Alert color="orange" variant="ghost" className=" text-sm">
+									{myError?.message}
+								</Alert>
+							)}
+						</div>
+						<Button type="submit" className="mt-4" fullWidth>
+							Registrar
+						</Button>
+
+						<CardFooter className="pt-0 flex justify-items-center flex-col">
+							<Typography variant="small" className="mt-2 flex justify-center">
+								¿Ya tienes una cuenta?
+								<Link href="/auth/login">
+									<Typography as="span" variant="small" color="blue" className="ml-1 font-bold">
+										Inicia Sesion
+									</Typography>
+								</Link>
+							</Typography>
+						</CardFooter>
+					</form>
+				</Card>
+			</div>
+		</LayoutHome>
 	)
 }

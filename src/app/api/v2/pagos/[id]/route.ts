@@ -5,24 +5,26 @@ import { NextResponse } from "next/server"
 export async function GET(request: Request, { params }: { params: { id: string } }) {
 	const id = Number(params.id)
 
-	const egreso = await prisma.egreso.findUnique({
+	const pago = await prisma.pago.findUnique({
 		where: {
 			id,
 		},
 	})
 
-	if (!egreso) {
-		return new NextResponse(`Egreso ${id} no encontrada `, { status: 404 })
+	if (!pago) {
+		return new NextResponse(`Pago ${id} no encontrado`, { status: 404 })
 	}
-	const { createdAt, updatedAt, ...egresoWithoutData } = egreso
 
-	return NextResponse.json(egresoWithoutData, { status: 200 })
+	return NextResponse.json(pago, { status: 200 })
 }
 
 export async function PATCH(request: Request, { params }: { params: { id: string } }) {
 	const id = Number(params.id)
-	const { fecha, descripcion, monto, busId, proveedorId } = await request.json()
-	const newDate = new Date(fecha)
+	const json = await request.json()
+	const { detalle } = json
+	const usuarioId = Number(json.usuarioId)
+	const valor = Number(json.valor)
+	const fecha = new Date(json.fecha)
 
 	try {
 		const schema = Joi.object({
@@ -32,39 +34,32 @@ export async function PATCH(request: Request, { params }: { params: { id: string
 				"date.empty": "La fecha no puede estar vacía",
 				"date.max": "La fecha no puede ser posterior a la fecha actual",
 			}),
-			descripcion: Joi.string().required().messages({
-				"any.required": "La descripcion es requerida",
-				"string.base": "La descripcion debe usar caracteres válidos",
-				"string.empty": "La descripcion está vacio",
+			detalle: Joi.string().required().messages({
+				"any.required": "La detalle es requerida",
+				"string.base": "La detalle debe usar caracteres válidos",
+				"string.empty": "La detalle está vacio",
 			}),
-			monto: Joi.number().required().messages({
+			valor: Joi.number().required().messages({
 				"any.required": "El monto requerido",
 				"number.base": "El monto no es correcto",
 				"number.empty": "El monto está vacio",
 			}),
-			busId: Joi.string().required().messages({
-				"any.required": "El bus es requerida",
-				"string.base": "El bus no tiene formato correcto",
-				"string.empty": "El bus está vacio",
-			}),
-			proveedorId: Joi.number().required().messages({
-				"any.required": "El proveedor es requerida",
-				"number.base": "El proveedor no tiene formato correcto",
-				"number.empty": "El proveedor está vacio",
+			usuarioId: Joi.number().required().messages({
+				"any.required": "El Usuario requerido",
+				"number.base": "El Usuario no es correcto",
+				"number.empty": "El Usuario está vacio",
 			}),
 		})
-		const { error } = schema.validate({ fecha, descripcion, monto, busId, proveedorId })
+		const { error } = schema.validate({ valor, detalle, fecha, usuarioId })
 		if (error) {
 			return new NextResponse(error.message, { status: 400 })
 		}
-		const updatedEgreso = await prisma.egreso.update({
+		const pago = await prisma.pago.update({
 			where: { id },
-			data: { fecha: newDate, descripcion, monto, busId, proveedorId },
+			data: { valor, detalle, fecha, usuarioId },
 		})
 
-		const { createdAt, updatedAt, ...egresoWithoutData } = updatedEgreso
-
-		return NextResponse.json(egresoWithoutData, { status: 201 })
+		return NextResponse.json(pago, { status: 201 })
 	} catch (error) {
 		if (error.code === "P2002") {
 			return new NextResponse("Ya existe id", {
@@ -85,13 +80,13 @@ export async function PATCH(request: Request, { params }: { params: { id: string
 export async function POST(request: Request, { params }: { params: { id: string } }) {
 	const id = Number(params.id)
 	try {
-		await prisma.egreso.delete({ where: { id } })
+		await prisma.pago.delete({ where: { id } })
 		//! Retorna respuesta, codigo 204
 		return new NextResponse(null, { status: 204 })
 	} catch (error: any) {
 		if (error.code === "P2025") {
 			//! Retorna mensaje si no existe id del registro
-			return new NextResponse("No existe registro de egreso", { status: 404 })
+			return new NextResponse("No existe registro de pago", { status: 404 })
 		}
 
 		return new NextResponse(error.message, { status: 500 })

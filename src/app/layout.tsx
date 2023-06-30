@@ -7,12 +7,11 @@ const inter = Inter({ subsets: ["latin"] })
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
 	return (
-		<html lang="en">
+		<html lang="es">
 			<body className={inter.className}>
 				<Providers>
 					<div className="bg-gray-50 dark:bg-blue-gray-50">{children}</div>
 					<Toaster />
-					<Footer />
 				</Providers>
 			</body>
 		</html>

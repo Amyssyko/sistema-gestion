@@ -8,6 +8,7 @@ import { useError } from "@/hooks/useError"
 import { error } from "console"
 import React from "react"
 import Link from "next/link"
+import { LayoutHome } from "@/components/Layout/LayoutHome"
 
 const Page = () => {
 	const router = useRouter()
@@ -54,7 +55,7 @@ const Page = () => {
 			redirect: false,
 			callbackUrl: "/",
 		})
-		console.log(result)
+
 		if (result?.error === "CredentialsSignin") {
 			setFormValues({
 				email: "",
@@ -77,12 +78,12 @@ const Page = () => {
 			handleError("Credenciales Invalidas")
 		}
 		if (result?.url) {
-			router.replace("/dashboard")
+			router.push("/")
 			toast.success("Sesión Iniciada", {
 				duration: 3000,
 				position: "top-center",
 
-				icon: "🐕🐈",
+				icon: "🚌",
 
 				iconTheme: {
 					primary: "#000",
@@ -93,70 +94,75 @@ const Page = () => {
 	}
 
 	return (
-		<div
-			className="bg-cover bg-center flex justify-center items-center w-full h-screen"
-			style={{
-				backgroundImage: "url(https://cdn.pixabay.com/photo/2014/09/04/15/35/collective-435584_1280.jpg)",
-				backgroundRepeat: "no-repeat",
-				backgroundSize: "cover",
-				backgroundPosition: "center",
-			}}
-		>
-			<Card className="w-full max-w-[36rem] content-center">
-				<div className="text-center my-8">
-					<Typography variant="h3" color="blue">
-						Inicio de Sesión
-					</Typography>
-					<Typography color="gray" className="mt-1 font-normal">
-						Ingrese sus credenciales
-					</Typography>
-				</div>
-
-				<form onSubmit={onSubmit} className="flex flex-col gap-4 border mx-24">
-					<Input
-						size="lg"
-						name="email"
-						id="email"
-						label="Email"
-						type="text"
-						value={formValues.email}
-						onChange={handleInputChange}
-						//placeholder="example@example.com"
-					/>
-					<Input
-						size="lg"
-						type="password"
-						name="password"
-						id="password"
-						label="Contraseña"
-						value={formValues.password}
-						onChange={handleInputChange}
-						//placeholder="********"
-					/>
-					<div className="flex w-full flex-col gap-2">
-						{isErrored && (
-							<Alert color={myError?.message == "Credenciales Invalidas" ? "red" : "orange"} variant="ghost">
-								{myError?.message}
-							</Alert>
-						)}
+		<LayoutHome>
+			<div
+				className="bg-cover bg-center flex justify-center items-center w-full h-screen"
+				style={{
+					backgroundImage: "url(https://cdn.pixabay.com/photo/2014/09/04/15/35/collective-435584_1280.jpg)",
+					backgroundRepeat: "no-repeat",
+					backgroundSize: "cover",
+					backgroundPosition: "center",
+				}}
+			>
+				<Card className="w-full max-w-[36rem] content-center">
+					<div className="text-center my-8">
+						<Typography variant="h3" color="blue">
+							Inicio de Sesión
+						</Typography>
+						<Typography color="gray" className="mt-1 font-normal">
+							Ingrese sus credenciales
+						</Typography>
 					</div>
-					<Button type="submit" className="mt-4" fullWidth>
-						Ingresar
-					</Button>
-				</form>
 
-				<CardFooter className="pt-0 flex justify-items-center flex-col">
-					<Typography variant="small" className="mt-2 flex justify-center">
-						¿No tienes una cuenta?
-						<Link href="/auth/register">
-							<Typography as="span" variant="small" color="blue" className="ml-1 font-bold">
-								Registrarse
-							</Typography>
-						</Link>
-					</Typography>
-				</CardFooter>
-			</Card>
-		</div>
+					<form onSubmit={onSubmit} className="flex flex-col gap-4 border mx-24">
+						<Input
+							size="lg"
+							name="email"
+							id="email"
+							label="Email"
+							type="text"
+							value={formValues.email}
+							onChange={handleInputChange}
+							//placeholder="example@example.com"
+						/>
+						<Input
+							size="lg"
+							type="password"
+							name="password"
+							id="password"
+							label="Contraseña"
+							value={formValues.password}
+							onChange={handleInputChange}
+							//placeholder="********"
+						/>
+						<div className="flex w-full flex-col gap-2">
+							{isErrored && (
+								<Alert
+									color={myError?.message == "Credenciales Invalidas" ? "red" : "orange"}
+									variant="ghost"
+								>
+									{myError?.message}
+								</Alert>
+							)}
+						</div>
+						<Button type="submit" className="mt-4" fullWidth>
+							Ingresar
+						</Button>
+					</form>
+
+					<CardFooter className="pt-0 flex justify-items-center flex-col">
+						<Typography variant="small" className="mt-2 flex justify-center">
+							¿No tienes una cuenta?
+							<Link href="/auth/register">
+								<Typography as="span" variant="small" color="blue" className="ml-1 font-bold">
+									Registrarse
+								</Typography>
+							</Link>
+						</Typography>
+					</CardFooter>
+				</Card>
+			</div>
+		</LayoutHome>
 	)
 }
 
