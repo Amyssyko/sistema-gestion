@@ -16,8 +16,8 @@ function Footer() {
 					height="4em"
 					width="3em"
 					stroke="currentColor"
-					stroke-linecap="round"
-					stroke-linejoin="round"
+					strokeLinecap="round"
+					strokeLinejoin="round"
 					className="text-black animate-pulse"
 				>
 					<path

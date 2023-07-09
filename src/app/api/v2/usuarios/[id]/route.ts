@@ -2,6 +2,7 @@ import { NextResponse } from "next/server"
 import Joi, { object } from "joi"
 import { verificarCedula } from "udv-ec"
 import prisma from "@/lib/prisma"
+import * as bcrypt from "bcrypt"
 
 export async function GET(request: Request, { params }: { params: { id: string } }) {
 	const id = Number(params.id)
@@ -19,7 +20,10 @@ export async function PATCH(request: Request, { params }: { params: { id: string
 
 	let json = await request.json()
 	const { dni, nombre, apellido, email, telefono, provincia, ciudad, calle } = json
-	const busPlaca = json.busPlaca.toString()
+
+	const busPlaca = json.busPlaca ?? ""
+	const password = json.password ?? ""
+
 	const schema = Joi.object({
 		dni: Joi.string().required().min(10).max(10).messages({
 			"any.required": "Cedula es requerida",
@@ -69,7 +73,7 @@ export async function PATCH(request: Request, { params }: { params: { id: string
 			"string.base": "La dirección no tiene formato correcto",
 			"string.empty": "La dirección está vacio",
 		}),
-		busPlaca: Joi.string()
+		/**	busPlaca: Joi.string()
 			//.pattern(new RegExp(/[A-C,E,G-Z]{1}[A]{1}[A-Z]{1}\d{4}/))
 			//.min(7)
 			//.max(7)
@@ -80,9 +84,9 @@ export async function PATCH(request: Request, { params }: { params: { id: string
 				"string.empty": "La matricula está vacio",
 				"string.min": "La matricula debe tener al menos 7 caracteres",
 				"string.max": "La matricula no puede tener más de 7 caracteres",
-			}),
+			}), */
 	})
-	const { error } = schema.validate(json)
+	const { error } = schema.validate({ dni, nombre, apellido, email, telefono, provincia, ciudad, calle })
 	if (error) {
 		return new NextResponse(error.message, { status: 400 })
 	}
@@ -92,7 +96,27 @@ export async function PATCH(request: Request, { params }: { params: { id: string
 	}
 
 	try {
-		if (busPlaca.length === 1) {
+		if (busPlaca && password) {
+			const updateUser = await prisma.usuario.update({
+				where: { id },
+				data: {
+					dni,
+					nombre,
+					apellido,
+					email,
+					telefono,
+					provincia,
+					password: await bcrypt.hash(json.password, 10),
+					ciudad,
+					calle,
+					busPlaca,
+				},
+			})
+			const { role, password, createdAt, updatedAt, ...userWithoutPerson } = updateUser
+			return NextResponse.json(userWithoutPerson, { status: 200 })
+		}
+
+		if (!busPlaca || !password) {
 			const updateUser = await prisma.usuario.update({
 				where: { id },
 				data: { dni, nombre, apellido, email, telefono, provincia, ciudad, calle, busPlaca: null },
@@ -100,15 +124,8 @@ export async function PATCH(request: Request, { params }: { params: { id: string
 			const { role, password, createdAt, updatedAt, ...userWithoutPerson } = updateUser
 			return NextResponse.json(userWithoutPerson, { status: 200 })
 		}
-		if (busPlaca.length > 1) {
-			const updateUser = await prisma.usuario.update({
-				where: { id },
-				data: { dni, nombre, apellido, email, telefono, provincia, ciudad, calle, busPlaca },
-			})
-			const { role, password, createdAt, updatedAt, ...userWithoutPerson } = updateUser
-			return NextResponse.json(userWithoutPerson, { status: 200 })
-		}
 	} catch (error: any) {
+
 		//Si ya existe email en otra cuenta
 		if (error.code === "P2002") {
 			return new NextResponse(`Ya existe se encuentra en uso ${busPlaca}`, { status: 409 })

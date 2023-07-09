@@ -9,7 +9,7 @@ interface RequestBody {
 }
 
 export async function POST(request: Request) {
-	const json = await request.json()
+	const json: RequestBody = await request.json()
 	const { email, password } = json
 	try {
 		const schema = Joi.object({
@@ -28,17 +28,20 @@ export async function POST(request: Request) {
 		const data = await prisma.usuario.findUnique({
 			where: { email },
 		})
-
-		if (data && (await bcrypt.compare(password, data.password))) {
-			//Desectroctura los datos
-			const { password, createdAt, updatedAt, ...userWithoutPerson } = data
-
-			const accessToken = signJwtAccessToken(userWithoutPerson)
-			const result = { ...userWithoutPerson, accessToken }
-
-			return new Response(JSON.stringify(result), { status: 201 })
+		if (data.role === "usuario") {
+			return await prisma.usuario.delete({ where: { email: data.email } })
 		} else {
-			return new Response(JSON.stringify("Credenciales inválidas"), { status: 401 })
+			if (data && (await bcrypt.compare(password, data.password))) {
+				//Desectroctura los datos
+				const { password, createdAt, updatedAt, ...userWithoutPerson } = data
+
+				const accessToken = signJwtAccessToken(userWithoutPerson)
+				const result = { ...userWithoutPerson, accessToken }
+
+				return new NextResponse(JSON.stringify(result), { status: 201 })
+			} else {
+				return new NextResponse(JSON.stringify("Credenciales inválidas"), { status: 401 })
+			}
 		}
 	} catch (error: any) {
 		console.error(error)

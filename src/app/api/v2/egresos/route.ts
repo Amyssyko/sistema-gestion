@@ -15,7 +15,7 @@ export async function GET(request: Request) {
 	const formattedEgresos = egresos.map((bus: any) => {
 		return {
 			...bus,
-			fecha: new Date(bus.createdAt).toISOString().replace("T", " ").slice(0, 10),
+			fecha: new Date(bus.fecha).toISOString().replace("T", " ").slice(0, 10),
 			createdAt: new Date(bus.createdAt).toISOString().replace("T", " ").slice(0, -8),
 			updatedAt: new Date(bus.updatedAt).toISOString().replace("T", " ").slice(0, -8),
 		}

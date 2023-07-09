@@ -7,9 +7,9 @@ import {
 	Typography,
 	Button,
 	CardBody,
+	Avatar,
 	IconButton,
 	Tooltip,
-	Spinner,
 } from "@material-tailwind/react"
 import Link from "next/link"
 import { useEffect, useState } from "react"
@@ -20,13 +20,15 @@ import { useSession } from "next-auth/react"
 import { Layout } from "@/components/Layout"
 import Loading from "@/components/Loading"
 import NoAdmin from "@/components/NoAdmin"
+import { LayoutHome } from "@/components/Layout/LayoutHome"
 
 const TABLE_HEAD = [
-	"Placa",
-	"Modelo",
-	"Capacidad",
-	"año",
-	"Fecha Creación",
+	"ID",
+	"Fecha",
+	"Descripción",
+	"Monto",
+	"Bus",
+	"Fecha Creacion",
 	"Fecha Actualización",
 	"Actualizar",
 	"Eliminar",
@@ -36,26 +38,27 @@ export default function Page() {
 	const { data: session } = useSession()
 	const rol = session?.user.role
 
-	const [buses, setBuses] = useState([])
+	const [ingresos, setIngresos] = useState([])
 
 	const router = useRouter()
 
 	const Cargando = () => {
-		if (session?.user?.role === undefined) {
+		if (session?.user.role === undefined) {
 			return <Loading />
 		}
 	}
 	const SinAcceso = () => {
-		if (session?.user?.role !== "admin") {
+		if (session?.user.role !== "admin" && session?.user.role !== "empleado") {
 			return <NoAdmin />
 		}
 	}
+
 	useEffect(() => {
 		const fetchData = async () => {
 			try {
-				const response = await fetch("/api/v2/buses")
+				const response = await fetch("/api/v2/ingresos")
 				const data = await response.json()
-				setBuses(data)
+				setIngresos(data)
 			} catch (error: Error | AxiosError | any) {
 				console.error(`${error?.response?.data} (${error?.response?.status})`)
 				if (error.response && error.response.status) {
@@ -74,9 +77,9 @@ export default function Page() {
 		fetchData()
 	}, [])
 
-	const handleDelete = async ({ placa }: { placa: String }) => {
+	const handleDelete = async ({ id }: { id: Number }) => {
 		try {
-			const response: AxiosResponse = await axios.post(`/api/v2/buses/${placa} `)
+			const response: AxiosResponse = await axios.post(`/api/v2/ingresos/${id} `)
 			if (response.status === 204) {
 				toast.success("Registro Eliminado", {
 					duration: 4000,
@@ -87,6 +90,7 @@ export default function Page() {
 						secondary: "#fff",
 					},
 				})
+				window.location.reload()
 			}
 		} catch (error: Error | AxiosError | any) {
 			console.error(`${error.response.data} (${error.response.status})`)
@@ -101,24 +105,24 @@ export default function Page() {
 					},
 				})
 			}
+			window.location.reload()
 		}
-		window.location.reload()
 	}
 
 	return (
 		<div>
 			{Cargando()}
 			{SinAcceso()}
-			<Layout>
-				<Card className="h-full w-full">
+			<LayoutHome>
+				<Card className="h-full  max-w-screen-2xl mx-auto ">
 					<CardHeader floated={false} shadow={false} className="rounded-none">
 						<div className="mb-8 flex items-center justify-center gap-8">
 							<div>
 								<Typography variant="h5" color="blue-gray" className="text-center">
-									Lista de Buses
+									Lista de Ingresos Registrados
 								</Typography>
 								<Typography color="gray" className="mt-1 font-normal">
-									Informacion de los buses registrados
+									Información de todos los ingresos registrados
 								</Typography>
 							</div>
 						</div>
@@ -141,18 +145,18 @@ export default function Page() {
 								</tr>
 							</thead>
 							<tbody>
-								{buses &&
-									buses.map(({ placa, modelo, capacidad, anio, createdAt, updatedAt }, index) => {
-										const isLast = index === buses.length - 1
+								{ingresos &&
+									ingresos.map(({ id, fecha, descripcion, monto, busId, createdAt, updatedAt }, index) => {
+										const isLast = index === ingresos.length - 1
 										const classes = isLast ? "p-4" : "p-4 border-b border-blue-gray-50"
 
 										return (
-											<tr key={index}>
+											<tr key={id}>
 												<td className={classes}>
 													<div className="flex items-center gap-3">
 														<div className="flex flex-col">
 															<Typography variant="small" color="blue-gray" className="font-normal ">
-																{placa}
+																{id}
 															</Typography>
 														</div>
 													</div>
@@ -160,21 +164,28 @@ export default function Page() {
 												<td className={classes}>
 													<div className="flex flex-col">
 														<Typography variant="small" color="blue-gray" className="font-normal">
-															{modelo}
+															{fecha}
 														</Typography>
 													</div>
 												</td>
 												<td className={classes}>
 													<div className="flex flex-col">
 														<Typography variant="small" color="blue-gray" className="font-normal">
-															{capacidad}
+															{descripcion}
 														</Typography>
 													</div>
 												</td>
 												<td className={classes}>
 													<div className="flex flex-col">
 														<Typography variant="small" color="blue-gray" className="font-normal">
-															{anio}
+															{monto}
+														</Typography>
+													</div>
+												</td>
+												<td className={classes}>
+													<div className="flex flex-col">
+														<Typography variant="small" color="blue-gray" className="font-normal">
+															{busId}
 														</Typography>
 													</div>
 												</td>
@@ -194,9 +205,9 @@ export default function Page() {
 												</td>
 
 												<td className={classes}>
-													<Link href={`/dashboard/entidad/buses/${placa}`}>
+													<Link href={`/ingresos/${id}`}>
 														<Button color="green" size="sm">
-															<Tooltip content="Editar Bus">
+															<Tooltip content="Editar Usuario">
 																<IconButton variant="text" color="blue-gray">
 																	<PencilIcon className="h-4 w-4" />
 																</IconButton>
@@ -207,11 +218,11 @@ export default function Page() {
 												<td className={classes}>
 													<Button
 														disabled={rol !== "admin"}
-														onClick={() => handleDelete({ placa })}
+														onClick={() => handleDelete({ id })}
 														size="sm"
 														color="red"
 													>
-														<Tooltip content="Eliminar Bus">
+														<Tooltip content="Eliminar Usuario">
 															<IconButton variant="text" color="blue-gray">
 																<TrashIcon className="h-4 w-4" />
 															</IconButton>
@@ -225,7 +236,7 @@ export default function Page() {
 						</table>
 					</CardBody>
 				</Card>
-			</Layout>
+			</LayoutHome>
 		</div>
 	)
 }

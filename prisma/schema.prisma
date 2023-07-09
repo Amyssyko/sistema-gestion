@@ -54,6 +54,7 @@ model Egreso {
 // Define la entidad "choferes"
 
 enum Role {
+  usuario
   empleado
   admin
 }
@@ -61,7 +62,7 @@ enum Role {
 model Usuario {
   id        Int       @id @default(autoincrement())
   dni       String?   @unique @db.VarChar(10)
-  role      Role      @default(empleado)
+  role      Role      @default(usuario)
   nombre    String?
   apellido  String?
   telefono  String?   @unique @db.VarChar(10)

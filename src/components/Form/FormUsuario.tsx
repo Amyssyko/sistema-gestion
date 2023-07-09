@@ -1,6 +1,6 @@
 "use client"
 import { useError } from "@/hooks/useError"
-import { Input, Card, Typography, Button } from "@material-tailwind/react"
+import { Input, Card, Typography, Button, Chip, Checkbox } from "@material-tailwind/react"
 import axios, { AxiosError, AxiosResponse } from "axios"
 import { useRouter } from "next/navigation"
 import React, { useState, useEffect, ChangeEvent } from "react"
@@ -27,6 +27,8 @@ interface FormData {
 }
 
 const FormChofer: React.FC<Data> = ({ id }) => {
+	const [isChecked, setIsChecked] = useState(false)
+
 	const [buses, setBuses] = useState([])
 	const [busPlaca, setBusPlaca] = useState("")
 	const [formData, setFormData] = useState<FormData>({
@@ -91,6 +93,7 @@ const FormChofer: React.FC<Data> = ({ id }) => {
 	}, [id])
 
 	const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+		console.log(isChecked)
 		event.preventDefault()
 		const { dni, nombre, apellido, email, password, telefono, provincia, ciudad, calle } = formData
 
@@ -146,10 +149,14 @@ const FormChofer: React.FC<Data> = ({ id }) => {
 					})
 				}
 			}
-			router.refresh()
-			router.replace("/dashboard/lista/usuarios")
+			setIsChecked(false)
 		}
+		window.location.reload()
+	}
 
+	const handleUpdate = async () => {
+		const { dni, nombre, apellido, email, telefono, provincia, ciudad, calle } = formData
+		console.log(String(busPlaca))
 		try {
 			const response: AxiosResponse = await axios.patch(`/api/v2/usuarios/${id}`, {
 				dni,
@@ -180,6 +187,20 @@ const FormChofer: React.FC<Data> = ({ id }) => {
 			}
 			router.push("/dashboard/lista/usuarios")
 		} catch (error: Error | AxiosError | any) {
+			console.log(error)
+
+			setFormData({
+				dni: "",
+				nombre: "",
+				apellido: "",
+				email: "",
+				password: "",
+				telefono: "",
+				provincia: "",
+				ciudad: "",
+				calle: "",
+			})
+			setIsChecked(false)
 			console.error(`${error.response.data} (${error.response.status})`)
 			if (error.response && error.response.status) {
 				handleError(error.response.data)
@@ -194,7 +215,6 @@ const FormChofer: React.FC<Data> = ({ id }) => {
 				})
 			}
 			router.refresh()
-			router.replace("/dashboard/lista/usuarios")
 		}
 	}
 
@@ -237,7 +257,6 @@ const FormChofer: React.FC<Data> = ({ id }) => {
 						value={formData.apellido}
 						onChange={handleInputChange}
 					/>
-
 					<Input
 						size="md"
 						type={"email"}
@@ -247,16 +266,38 @@ const FormChofer: React.FC<Data> = ({ id }) => {
 						value={formData.email}
 						onChange={handleInputChange}
 					/>
-
-					<Input
-						size="md"
-						type={"text"}
-						name={"password"}
-						id={"password"}
-						label={"Contraseña"}
-						value={formData.password}
-						onChange={handleInputChange}
-					/>
+					<div className="flex flex-col">
+						<Input
+							disabled={isChecked}
+							size="md"
+							type={"text"}
+							name={"password"}
+							id={"password"}
+							label={"Contraseña"}
+							value={isChecked ? "" : formData.password}
+							onChange={handleInputChange}
+						/>
+						<div className="ml-96 absolute mt-1">
+							<Chip
+								value="inhabilitar"
+								variant="ghost"
+								className="bg-white"
+								icon={
+									<Checkbox
+										type="checkbox"
+										value="true"
+										onChange={(e) => setIsChecked(!isChecked)}
+										id="check"
+										name="check"
+										color="green"
+										ripple={false}
+										containerProps={{ className: "p-0" }}
+										className="border-gray-900 border-2 checked:bg-blue-900 checked:border-green-900 -ml-px before:hidden"
+									/>
+								}
+							/>
+						</div>
+					</div>
 
 					<Input
 						size="md"
@@ -307,7 +348,7 @@ const FormChofer: React.FC<Data> = ({ id }) => {
 						value={busPlaca}
 						onChange={handleSelectChange}
 					>
-						<option value=" ">Selecione Bus</option>
+						<option value="0">Selecione Bus</option>
 						{buses.map(({ placa }) => (
 							<option key={placa} value={placa}>
 								{placa}
@@ -318,7 +359,7 @@ const FormChofer: React.FC<Data> = ({ id }) => {
 
 				{id ? (
 					<div className="mt-6 flex justify-center">
-						<Button className=" bg-green-800 rounded-md  mx-auto " type="submit">
+						<Button className=" bg-green-800 rounded-md  mx-auto " onClick={handleUpdate}>
 							Actualizar
 						</Button>
 					</div>

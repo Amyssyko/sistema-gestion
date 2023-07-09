@@ -35,7 +35,7 @@ export default function SidebarAdmin() {
 			<div className="mb-2 flex items-center gap-4 p-4">
 				<Avatar src="https://source.unsplash.com/random?wallpapers" alt="brand" className="h-8 w-8" />
 				<Link href={"/"}>
-					<Typography variant="span" color="gray">
+					<Typography variant="small" color="gray">
 						{session?.user.nombre && session?.user.apellido
 							? ` Bienvenido ${session?.user.nombre} ${session?.user.apellido} `
 							: "Bienvenido"}

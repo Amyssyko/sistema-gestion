@@ -4,6 +4,7 @@ import { NextResponse } from "next/server"
 import Joi from "joi"
 import { verificarCedula } from "udv-ec"
 import * as bcrypt from "bcrypt"
+import { type } from "os"
 
 export async function GET(request: Request) {
 	function isEmptyObject(obj: any): boolean {
@@ -18,10 +19,22 @@ export async function GET(request: Request) {
 	return NextResponse.json(users, { status: 200 })
 }
 
+type BodyRequest = {
+	dni: string
+	nombre: string
+	apellido: string
+	email: string
+	password: string
+	telefono: string
+	provincia: string
+	ciudad: string
+	calle: string
+	busPlaca?: string
+}
+
 export async function POST(request: Request) {
 	const json = await request.json()
-
-	const { dni, nombre, apellido, email, password, telefono, provincia, ciudad, calle } = json
+	const { dni, nombre, apellido, email, password, telefono, provincia, ciudad, calle, busPlaca } = json
 	try {
 		const schema = Joi.object({
 			dni: Joi.string().required().min(10).max(10).messages({
@@ -98,6 +111,23 @@ export async function POST(request: Request) {
 			return new NextResponse(`Cedula no es valida!`, { status: 400 })
 		}
 
+		if (!busPlaca) {
+			const usuario = await prisma.usuario.create({
+				data: {
+					dni,
+					nombre,
+					apellido,
+					email,
+					password: await bcrypt.hash(json.password, 10),
+					telefono,
+					provincia,
+					ciudad,
+					calle,
+				},
+			})
+			return NextResponse.json(usuario, { status: 200 })
+		}
+
 		const usuario = await prisma.usuario.create({
 			data: {
 				dni,
@@ -109,6 +139,7 @@ export async function POST(request: Request) {
 				provincia,
 				ciudad,
 				calle,
+				busPlaca,
 			},
 		})
 
