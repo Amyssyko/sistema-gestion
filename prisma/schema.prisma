@@ -29,7 +29,7 @@ model Ingreso {
   id          Int       @id @default(autoincrement())
   fecha       DateTime  @db.Date
   descripcion String
-  monto       Decimal   @db.Money
+  monto       Decimal
   bus         Bus?      @relation(fields: [busId], references: [placa])
   busId       String?
   createdAt   DateTime? @default(now())
@@ -41,7 +41,7 @@ model Ingreso {
 model Egreso {
   id          Int        @id @default(autoincrement())
   descripcion String
-  monto       Decimal    @db.Money()
+  monto       Decimal
   fecha       DateTime   @db.Date
   bus         Bus?       @relation(fields: [busId], references: [placa])
   busId       String?
@@ -91,7 +91,7 @@ model Proveedor {
 
 model Pago {
   id        Int       @id @default(autoincrement())
-  valor     Decimal   @db.Money
+  valor     Decimal
   detalle   String
   fecha     DateTime
   Usuario   Usuario?  @relation(fields: [usuarioId], references: [id])

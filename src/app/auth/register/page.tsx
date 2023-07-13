@@ -102,7 +102,8 @@ export default function SignUp() {
 			})
 
 			console.error(`${error.response.data} (${error.response.status})`)
-			if (error.response && error.response.status) {
+
+			/**if (error.response && error.response.status) {
 				toast.error(error.response.data, {
 					duration: 3000,
 					position: "top-left",
@@ -112,7 +113,7 @@ export default function SignUp() {
 						secondary: "#fff",
 					},
 				})
-			}
+			} */
 
 			router.refresh()
 			//resetError()

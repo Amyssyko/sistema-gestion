@@ -1,6 +1,6 @@
 "use client"
 import { useError } from "@/hooks/useError"
-import { Input, Card, Typography, Button } from "@material-tailwind/react"
+import { Input, Card, Typography, Button, Select, Option } from "@material-tailwind/react"
 import axios, { AxiosError, AxiosResponse } from "axios"
 import { useSession } from "next-auth/react"
 import { useRouter } from "next/navigation"
@@ -30,7 +30,7 @@ const FormIngreso: React.FC<Data> = ({ id }) => {
 		if (session?.user.role === undefined) {
 			setTimeout(() => {
 				router.push("/")
-			}, 3000)
+			}, 4000)
 			return <Loading />
 		}
 	}
@@ -231,16 +231,16 @@ const FormIngreso: React.FC<Data> = ({ id }) => {
 							onChange={handleInputChange}
 						/>
 
-						<label className="-mb-6 -mt-5 text-xs ml-3 text-gray-500"> Bus</label>
+						<label className="-mb-6 -mt-5 text-xs ml-4 text-blue-gray-400"> Bus</label>
 						<select
-							className="border border-gray-400 hover:bg-white hover:text-gray-400 text-gray-700 px-4 py-2 rounded-md"
+							className="border border-spacing-12 text-base border-gray-400 focus:border-blue-400 hover:bg-white hover:text-gray-600 text-blue-gray-400 px-4 py-2 rounded-md bg-white"
 							value={busId}
 							onChange={handleSelectChange}
 						>
-							<option value="">Selecione Bus</option>
-							{buses.map(({ placa }) => (
+							<option value="">Seleccione Bus</option>
+							{buses.map(({ modelo, anio, placa }) => (
 								<option key={placa} value={placa}>
-									{placa}
+									{`${modelo}  ${placa}`}
 								</option>
 							))}
 						</select>

@@ -30,7 +30,7 @@ const FormIngreso: React.FC<Data> = ({ id }) => {
 		if (session?.user.role === undefined) {
 			setTimeout(() => {
 				router.push("/")
-			}, 1000)
+			}, 4000)
 			return <Loading />
 		}
 	}
@@ -189,7 +189,7 @@ const FormIngreso: React.FC<Data> = ({ id }) => {
 				})
 			}
 			if (rol === "admin") {
-				return router.replace("/dashboard/lista/ingresos")
+				return router.replace("/dashboard/lista/egresos")
 			}
 			if (rol === "empleado") {
 				return router.replace("/ingresos/lista")
@@ -253,9 +253,9 @@ const FormIngreso: React.FC<Data> = ({ id }) => {
 							onChange={handleInputChange}
 						/>
 
-						<label className="-mb-6 -mt-5 text-xs ml-3 text-gray-500">Bus</label>
+						<label className="-mb-6 -mt-5 text-xs ml-4 text-blue-gray-400">Bus</label>
 						<select
-							className="border border-gray-400 hover:bg-white hover:text-gray-400 text-gray-700 px-4 py-2 rounded-md"
+							className="border border-spacing-12 text-base border-gray-400 focus:border-blue-400 hover:bg-white hover:text-gray-600 text-blue-gray-400 px-4 py-2 rounded-md bg-white"
 							value={busId}
 							onChange={handleChangeBus}
 						>
@@ -267,9 +267,9 @@ const FormIngreso: React.FC<Data> = ({ id }) => {
 							))}
 						</select>
 
-						<label className="-mb-6 -mt-5 text-xs ml-3 text-gray-500">Proveedor</label>
+						<label className="-mb-6 -mt-5 text-xs ml-4 text-blue-gray-400">Proveedor</label>
 						<select
-							className="border border-gray-400 hover:bg-white hover:text-gray-400 text-gray-700 px-4 py-2 rounded-md"
+							className="border border-spacing-12 text-base border-gray-400 focus:border-blue-400 hover:bg-white hover:text-gray-600 text-blue-gray-400 px-4 py-2 rounded-md bg-white"
 							value={proveedorId}
 							onChange={handleChangeProveedor}
 						>
