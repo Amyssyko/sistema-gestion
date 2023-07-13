@@ -8,7 +8,7 @@ export async function GET(request: Request) {
 		return new NextResponse("No existen egresos", { status: 404 })
 	}
 
-	const egresostotal = egreso.reduce((total, { monto }) => total + Number(monto), 0)
+	const egresostotal = egreso && egreso?.reduce((total, { monto }) => total + Number(monto), 0)
 
 	return NextResponse.json({ egresostotal }, { status: 200 })
 }

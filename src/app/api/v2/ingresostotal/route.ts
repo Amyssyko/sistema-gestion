@@ -8,7 +8,7 @@ export async function GET(request: Request) {
 		return new NextResponse("No existen ingresos", { status: 404 })
 	}
 
-	const ingresostotal = ingreso.reduce((total, { monto }) => total + Number(monto), 0)
+	const ingresostotal = ingreso && ingreso?.reduce((total, { monto }) => total + Number(monto), 0)
 
 	return NextResponse.json({ ingresostotal }, { status: 200 })
 }

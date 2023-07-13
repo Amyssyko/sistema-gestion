@@ -8,7 +8,7 @@ export async function GET(request: Request) {
 		return new NextResponse("No existen pagos", { status: 404 })
 	}
 
-	const pagostotal = pagos.reduce((total, { valor }) => total + Number(valor), 0)
+	const pagostotal = pagos && pagos?.reduce((total, { valor }) => total + Number(valor), 0)
 
 	return NextResponse.json({ pagostotal }, { status: 200 })
 }
