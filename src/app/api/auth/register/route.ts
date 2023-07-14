@@ -1,5 +1,3 @@
-"use server"
-
 import * as bcrypt from "bcrypt"
 import { NextResponse } from "next/server"
 import Joi from "joi"

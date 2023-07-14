@@ -33,6 +33,7 @@ const handler = NextAuth({
 						"Content-Type": "application/json",
 					},
 				})
+
 				if (!res.ok) {
 					return null
 				}

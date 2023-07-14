@@ -20,7 +20,6 @@ import { useRouter } from "next/navigation"
 import Link from "next/link"
 
 export default function SidebarAdmin() {
-	const router = useRouter()
 	const { data: session } = useSession()
 
 	const [open, setOpen] = React.useState(0)
@@ -34,10 +33,10 @@ export default function SidebarAdmin() {
 		<Card className="fixed top-14 left-2 h-[calc(100vh-11rem)] w-60 sm:w-60 md:w-60 lg:w-60 xl:w-60 2xl:w-60 p-2  ">
 			<div className="mb-2 flex items-center gap-4 p-4">
 				<Avatar src="https://source.unsplash.com/random?wallpapers" alt="brand" className="h-8 w-8" />
-				<Link href={"/"}>
+				<Link href={"/dashboard"}>
 					<Typography variant="small" color="gray">
-						{session?.user.nombre && session?.user.apellido
-							? ` Bienvenido ${session?.user.nombre} ${session?.user.apellido} `
+						{session?.user?.nombre && session?.user?.apellido
+							? ` Bienvenido ${session?.user?.nombre} ${session?.user?.apellido} `
 							: "Bienvenido"}
 					</Typography>
 				</Link>

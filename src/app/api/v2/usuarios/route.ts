@@ -1,10 +1,8 @@
-"use server"
 import prisma from "@/lib/prisma"
 import { NextResponse } from "next/server"
 import Joi from "joi"
 import { verificarCedula } from "udv-ec"
 import * as bcrypt from "bcrypt"
-import { type } from "os"
 
 export async function GET(request: Request) {
 	function isEmptyObject(obj: any): boolean {

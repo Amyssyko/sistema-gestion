@@ -12,31 +12,70 @@ import { Typography } from "@material-tailwind/react"
 type Repo = {
 	monto: number
 }
+
+interface DataPago {
+	id: number
+	valor: string
+	detalle: string
+	fecha: string
+	usuarioId: number | null
+	createdAt: string
+	updatedAt: string
+}
+
+interface DataIngreso {
+	id: number
+	fecha: string
+	descripcion: string
+	monto: string
+	busId: string
+	createdAt: string
+	updatedAt: string
+}
+
+interface DataEgreso {
+	id: number
+	descripcion: string
+	monto: string
+	fecha: string
+	busId: string
+	proveedorId: number
+	createdAt: string
+	updatedAt: string
+}
+
 function Page() {
 	const { data: session } = useSession()
-	const role = session?.user.role
-	const [ingresos, setIngresos] = useState(0)
-	const [egresos, setEgresos] = useState(0)
-	const [pagos, setPagos] = useState(0)
+	const role = session?.user?.role
+	const [ingresos, setIngresos] = useState<DataIngreso[]>([])
+	const [egresos, setEgresos] = useState<DataEgreso[]>([])
+	const [pagos, setPagos] = useState<DataPago[]>([])
 
-	const total = pagos + ingresos + egresos
-	const porcentajePagos = (pagos / total) * 100
-	console.log(porcentajePagos)
-	const porcentajeIngresos = (ingresos / total) * 100
-	console.log(porcentajeIngresos)
-	const porcentajeEgresos = (egresos / total) * 100
-	console.log(porcentajeEgresos)
-	const totalGanancia = ingresos - (pagos + egresos)
+	const totalIngreso = ingresos.reduce((accumulator, expense) => {
+		return accumulator + Number(expense.monto)
+	}, 0)
+	const totalEgreso = egresos.reduce((accumulator, expense) => {
+		return accumulator + Number(expense.monto)
+	}, 0)
+	const totalPago = pagos.reduce((accumulator, expense) => {
+		return accumulator + Number(expense.valor)
+	}, 0)
+
+	const total = Number((totalPago + totalIngreso + totalEgreso).toPrecision(4))
+	const porcentajePagos = Number(((totalPago / total) * 100).toPrecision(4))
+	const porcentajeIngresos = Number(((totalIngreso / total) * 100).toPrecision(4))
+	const porcentajeEgresos = Number(((totalEgreso / total) * 100).toPrecision(4))
+	const totalGanancia = Number((totalIngreso - (totalEgreso + totalPago)).toPrecision(4))
 
 	useEffect(() => {
 		const getPagos = async () => {
 			try {
-				const dataPagos = await axios.get("/api/v2/pagostotal")
-				const dataIngreso = await axios.get("/api/v2/ingresostotal")
-				const dataEgreso = await axios.get("/api/v2/egresostotal")
-				setEgresos(dataEgreso.data.egresostotal)
-				setIngresos(dataIngreso.data.ingresostotal)
-				setPagos(dataPagos.data.pagostotal)
+				const dataPago = await axios.get("/api/v2/pagos")
+				const dataIngreso = await axios.get("/api/v2/ingresos")
+				const dataEgreso = await axios.get("/api/v2/egresos")
+				setEgresos(dataEgreso.data)
+				setIngresos(dataIngreso.data)
+				setPagos(dataPago.data)
 			} catch (error) {
 				console.error(error)
 			}
@@ -53,7 +92,7 @@ function Page() {
 		}
 	}
 
-	if (ingresos === 0 && egresos === 0 && pagos === 0) {
+	if (totalEgreso === 0 && totalIngreso === 0 && totalPago === 0) {
 		return (
 			<Layout>
 				<div className="bg-zinc-90 p-8 mt-24">
@@ -77,7 +116,7 @@ function Page() {
 						</div>
 
 						<div>
-							<Typography className="text-center" variant="h3" color="blue" textGradient>
+							<Typography className="text-center" variant="h3" color="red" textGradient>
 								Total Ingresos
 							</Typography>
 							<Typography className="text-center" variant="h4" color="blue" textGradient>
@@ -86,7 +125,7 @@ function Page() {
 						</div>
 
 						<div>
-							<Typography className="text-center" variant="h3" color="blue" textGradient>
+							<Typography className="text-center" variant="h3" color="red" textGradient>
 								Total Ganancias
 							</Typography>
 							<Typography className="text-center" variant="h4" color="blue" textGradient>
@@ -113,7 +152,7 @@ function Page() {
 							Total Pagos a Choferes
 						</Typography>
 						<Typography className="text-center" variant="h4" color="blue" textGradient>
-							{pagos.toFixed(2)}
+							{totalPago}
 						</Typography>
 					</div>
 
@@ -122,7 +161,7 @@ function Page() {
 							Total Egresos
 						</Typography>
 						<Typography className="text-center" variant="h4" color="blue" textGradient>
-							{egresos.toFixed(2)}
+							{totalEgreso}
 						</Typography>
 					</div>
 
@@ -131,7 +170,7 @@ function Page() {
 							Total Ingresos
 						</Typography>
 						<Typography className="text-center" variant="h4" color="blue" textGradient>
-							{ingresos.toFixed(2)}
+							{totalIngreso}
 						</Typography>
 					</div>
 
@@ -140,7 +179,7 @@ function Page() {
 							Total Ganancias
 						</Typography>
 						<Typography className="text-center" variant="h4" color="blue" textGradient>
-							{totalGanancia.toFixed(2)}
+							{totalGanancia}
 						</Typography>
 					</div>
 				</div>
@@ -189,9 +228,9 @@ function Page() {
 						width={550}
 						height={550}
 						data={[
-							{ x: `${ingresos} USD ${porcentajeIngresos.toFixed(2)}%`, y: porcentajeIngresos },
-							{ x: `${egresos} USD ${porcentajeEgresos.toFixed(2)}%`, y: porcentajeEgresos },
-							{ x: `${pagos} USD ${porcentajePagos.toFixed(2)}%`, y: porcentajePagos },
+							{ x: `${totalIngreso} USD ${porcentajeIngresos.toFixed(2)}%`, y: porcentajeIngresos },
+							{ x: `${totalEgreso} USD ${porcentajeEgresos.toFixed(2)}%`, y: porcentajeEgresos },
+							{ x: `${totalPago} USD ${porcentajePagos.toFixed(2)}%`, y: porcentajePagos },
 						]}
 						innerRadius={40}
 						labelRadius={70}

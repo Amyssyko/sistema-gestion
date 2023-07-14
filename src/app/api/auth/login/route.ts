@@ -10,6 +10,7 @@ interface RequestBody {
 
 export async function POST(request: Request) {
 	const json: RequestBody = await request.json()
+
 	const { email, password } = json
 	try {
 		const schema = Joi.object({
