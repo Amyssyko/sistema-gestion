@@ -10,5 +10,5 @@ export async function GET(request: Request) {
 
 	const egresostotal = egreso && egreso?.reduce((total, { monto }) => total + Number(monto), 0)
 
-	return NextResponse.json({ egresostotal }, { status: 200 })
+	return NextResponse.json(egresostotal, { status: 200 })
 }

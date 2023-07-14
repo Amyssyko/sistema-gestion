@@ -10,5 +10,5 @@ export async function GET(request: Request) {
 
 	const ingresostotal = ingreso && ingreso?.reduce((total, { monto }) => total + Number(monto), 0)
 
-	return NextResponse.json({ ingresostotal }, { status: 200 })
+	return NextResponse.json(ingresostotal, { status: 200 })
 }
