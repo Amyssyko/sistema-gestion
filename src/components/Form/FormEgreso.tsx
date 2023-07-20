@@ -136,7 +136,7 @@ const FormIngreso: React.FC<Data> = ({ id }) => {
 				})
 			}
 			if (rol === "admin") {
-				return router.replace("/dashboard/lista/ingresos")
+				return router.replace("/dashboard/lista/egresos")
 			}
 			if (rol === "empleado") {
 				return router.replace("/ingresos/lista")
