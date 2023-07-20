@@ -54,6 +54,7 @@ function Page() {
 	const totalIngreso = ingresos.reduce((accumulator, expense) => {
 		return accumulator + Number(expense.monto)
 	}, 0)
+	const convertedtotalIngreso = totalIngreso.toFixed(2)
 	const totalEgreso = egresos.reduce((accumulator, expense) => {
 		return accumulator + Number(expense.monto)
 	}, 0)
@@ -170,7 +171,7 @@ function Page() {
 							Total Ingresos
 						</Typography>
 						<Typography className="text-center" variant="h4" color="blue" textGradient>
-							{totalIngreso}
+							{convertedtotalIngreso}
 						</Typography>
 					</div>
 
@@ -228,7 +229,7 @@ function Page() {
 						width={550}
 						height={550}
 						data={[
-							{ x: `${totalIngreso} USD ${porcentajeIngresos.toFixed(2)}%`, y: porcentajeIngresos },
+							{ x: `${convertedtotalIngreso} USD ${porcentajeIngresos.toFixed(2)}%`, y: porcentajeIngresos },
 							{ x: `${totalEgreso} USD ${porcentajeEgresos.toFixed(2)}%`, y: porcentajeEgresos },
 							{ x: `${totalPago} USD ${porcentajePagos.toFixed(2)}%`, y: porcentajePagos },
 						]}
