@@ -13,17 +13,16 @@ import {
 	AccordionBody,
 	Avatar,
 } from "@material-tailwind/react"
-import { UserCircleIcon, PowerIcon, UserGroupIcon } from "@heroicons/react/24/solid"
+import { PowerIcon } from "@heroicons/react/24/solid"
 import { ChevronRightIcon, ChevronDownIcon } from "@heroicons/react/24/outline"
 import { useSession } from "next-auth/react"
-import { useRouter } from "next/navigation"
+
 import Link from "next/link"
 
 export default function SidebarAdmin() {
 	const { data: session } = useSession()
 
 	const [open, setOpen] = React.useState(0)
-	const [openAlert, setOpenAlert] = React.useState(true)
 
 	const handleOpen = (value: any) => {
 		setOpen(open === value ? 0 : value)
@@ -37,7 +36,7 @@ export default function SidebarAdmin() {
 					<Typography variant="small" color="gray">
 						{session?.user?.nombre && session?.user?.apellido
 							? ` Bienvenido ${session?.user?.nombre} ${session?.user?.apellido} `
-							: "Bienvenido"}
+							: "Bienvenido al Sistema"}
 					</Typography>
 				</Link>
 			</div>
@@ -324,12 +323,6 @@ export default function SidebarAdmin() {
 					</AccordionBody>
 				</Accordion>
 				<hr className="my-2 border-blue-gray-50" />
-				<ListItem>
-					<ListItemPrefix>
-						<UserCircleIcon className="h-5 w-5" />
-					</ListItemPrefix>
-					Profile
-				</ListItem>
 				<ListItem onClick={() => signOut()} className=" hover:text-red-800">
 					<ListItemPrefix>
 						<PowerIcon className="h-5 w-5" />
