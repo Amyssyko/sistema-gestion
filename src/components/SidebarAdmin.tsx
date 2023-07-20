@@ -18,6 +18,7 @@ import { ChevronRightIcon, ChevronDownIcon } from "@heroicons/react/24/outline"
 import { useSession } from "next-auth/react"
 
 import Link from "next/link"
+import NoAdmin from "./NoAdmin"
 
 export default function SidebarAdmin() {
 	const { data: session } = useSession()
@@ -26,6 +27,10 @@ export default function SidebarAdmin() {
 
 	const handleOpen = (value: any) => {
 		setOpen(open === value ? 0 : value)
+	}
+
+	if (session.user.role !== "admin") {
+		return <NoAdmin />
 	}
 
 	return (

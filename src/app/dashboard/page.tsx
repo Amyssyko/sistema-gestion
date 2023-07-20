@@ -93,7 +93,7 @@ function Page() {
 		}
 	}
 
-	if (totalEgreso === 0 && totalIngreso === 0 && totalPago === 0) {
+	if (totalEgreso === 0 && totalIngreso === 0 && totalPago === 0 && session.user.role === "admin") {
 		return (
 			<Layout>
 				<div className="bg-zinc-90 p-8 mt-24">
