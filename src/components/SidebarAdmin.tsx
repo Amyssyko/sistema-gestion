@@ -29,7 +29,7 @@ export default function SidebarAdmin() {
 		setOpen(open === value ? 0 : value)
 	}
 
-	if (session.user.role !== "admin") {
+	if (session?.user?.role !== "admin") {
 		return <NoAdmin />
 	}
 
