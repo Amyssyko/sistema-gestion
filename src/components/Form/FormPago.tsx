@@ -209,7 +209,7 @@ const FormIngreso: React.FC<Data> = ({ id }) => {
 							Selecione Usuario
 						</option>
 						{usuarios.map(({ id, nombre, apellido, dni }) => (
-							<option className="text-black " key={id} value={id}>
+							<option className="text-black" key={id} value={id}>
 								{nombre && apellido ? `${dni}  ${nombre} ${apellido}` : `${dni} `}
 							</option>
 						))}
