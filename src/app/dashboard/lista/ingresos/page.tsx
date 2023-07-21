@@ -62,7 +62,7 @@ export default function Page() {
 				console.error(`${error?.response?.data} (${error?.response?.status})`)
 				if (error.response && error.response.status) {
 					toast.error(error.response.data, {
-						duration: 3000,
+						duration: 4000,
 						position: "top-left",
 						icon: "❌",
 						iconTheme: {
@@ -96,7 +96,7 @@ export default function Page() {
 			console.error(`${error.response.data} (${error.response.status})`)
 			if (error.response && error.response.status) {
 				toast.error(error.response.data, {
-					duration: 3000,
+					duration: 4000,
 					position: "top-left",
 					icon: "❌",
 					iconTheme: {

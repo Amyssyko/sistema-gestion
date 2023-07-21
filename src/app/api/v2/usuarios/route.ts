@@ -33,6 +33,7 @@ type BodyRequest = {
 export async function POST(request: Request) {
 	const json = await request.json()
 	const { dni, nombre, apellido, email, password, telefono, provincia, ciudad, calle, busPlaca } = json
+
 	try {
 		const schema = Joi.object({
 			dni: Joi.string().required().min(10).max(10).messages({
@@ -90,7 +91,7 @@ export async function POST(request: Request) {
 			}),
 		})
 
-		const { error, value } = schema.validate({
+		const { error } = schema.validate({
 			dni,
 			nombre,
 			apellido,
@@ -102,11 +103,10 @@ export async function POST(request: Request) {
 			calle,
 		})
 		if (error) {
+			if (!verificarCedula(dni)) {
+				return new NextResponse("Cedula no es valida!", { status: 400 })
+			}
 			return new NextResponse(error.message, { status: 400 })
-		}
-
-		if (!verificarCedula(value.dni)) {
-			return new NextResponse(`Cedula no es valida!`, { status: 400 })
 		}
 
 		if (!busPlaca) {
@@ -225,7 +225,7 @@ export async function PATCH(request: Request) {
 				}),
 		})
 
-		const { error, value } = schema.validate({
+		const { error } = schema.validate({
 			dni,
 			nombre,
 			apellido,
@@ -238,11 +238,10 @@ export async function PATCH(request: Request) {
 			busPlaca,
 		})
 		if (error) {
+			if (!verificarCedula(dni)) {
+				return new NextResponse("Cedula no es valida!", { status: 400 })
+			}
 			return new NextResponse(error.message, { status: 400 })
-		}
-
-		if (!verificarCedula(value.dni)) {
-			return new NextResponse(`Cedula no es valida!`, { status: 400 })
 		}
 
 		const usuario = await prisma.usuario.update({

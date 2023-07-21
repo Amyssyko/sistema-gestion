@@ -78,7 +78,7 @@ const Page = () => {
 		if (result?.url) {
 			router.push("/")
 			toast.success("Sesión Iniciada", {
-				duration: 3000,
+				duration: 4000,
 				position: "top-center",
 				icon: "🚌",
 				iconTheme: {

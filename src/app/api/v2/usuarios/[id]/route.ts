@@ -93,11 +93,20 @@ export async function PATCH(request: Request, { params }: { params: { id: string
 	})
 	const { error } = schema.validate({ dni, nombre, apellido, email, telefono, provincia, ciudad, calle })
 	if (error) {
-		return new NextResponse(error.message, { status: 400 })
-	}
+		if (!dni) {
+			return new NextResponse("Cedula es requerida", { status: 400 })
+		}
 
-	if (!verificarCedula(json.dni)) {
-		return new NextResponse(`${json.dni} no es valida`, { status: 400 })
+		if (dni.length < 10) {
+			return new NextResponse("La cedula debe contener 10 dígitos ", { status: 400 })
+		}
+		if (dni.length > 10) {
+			return new NextResponse("La cedula debe contener al menos 10 dígitos ", { status: 400 })
+		}
+		if (!verificarCedula(dni)) {
+			return new NextResponse("Cedula no es valida", { status: 400 })
+		}
+		return new NextResponse(error.message, { status: 400 })
 	}
 
 	try {

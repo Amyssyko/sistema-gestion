@@ -23,7 +23,7 @@ const useError = () => {
 		if (isErrored) {
 			timeoutId = setTimeout(() => {
 				resetError()
-			}, 3000)
+			}, 4000)
 		}
 
 		return () => {

@@ -66,7 +66,7 @@ export default function SignUp() {
 
 			if (response.status === 201) {
 				toast.success("Usuario registrado con éxito", {
-					duration: 3000,
+					duration: 4000,
 					position: "top-left",
 
 					icon: "✅",
@@ -86,7 +86,7 @@ export default function SignUp() {
 
 			/**if (error.response && error.response.status) {
 				toast.error(error.response.data, {
-					duration: 3000,
+					duration: 4000,
 					position: "top-left",
 					icon: "❌",
 					iconTheme: {

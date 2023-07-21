@@ -135,7 +135,7 @@ const FormIngreso: React.FC<Data> = ({ id }) => {
 				handleError(error.response.data)
 				/**
 				toast.error(error.response.data, {
-					duration: 3000,
+					duration: 4000,
 					position: "top-left",
 					icon: "❌",
 					iconTheme: {
@@ -184,7 +184,7 @@ const FormIngreso: React.FC<Data> = ({ id }) => {
 			if (error.response && error.response.status) {
 				handleError(error.response.data)
 				/**	toast.error(error.response.data, {
-					duration: 3000,
+					duration: 4000,
 					position: "top-left",
 					icon: "❌",
 					iconTheme: {

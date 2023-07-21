@@ -128,7 +128,7 @@ const FormChofer: React.FC<Data> = ({ id }) => {
 				if (error.response && error.response.status) {
 					handleError(error.response.data)
 					/**toast.error(error.response.data, {
-						duration: 3000,
+						duration: 4000,
 						position: "top-right",
 						icon: "⚠️",
 						iconTheme: {
@@ -138,7 +138,6 @@ const FormChofer: React.FC<Data> = ({ id }) => {
 					}) */
 				}
 			}
-			setIsChecked(false)
 		}
 	}
 
@@ -172,12 +171,11 @@ const FormChofer: React.FC<Data> = ({ id }) => {
 			}
 			router.push("/dashboard/lista/usuarios")
 		} catch (error: Error | AxiosError | any) {
-			setIsChecked(false)
 			console.error(`${error.response.data} (${error.response.status})`)
 			if (error.response && error.response.status) {
 				handleError(error.response.data)
 				/**toast.error(error.response.data, {
-					duration: 3000,
+					duration: 4000,
 					position: "top-right",
 					icon: "⚠️",
 					iconTheme: {

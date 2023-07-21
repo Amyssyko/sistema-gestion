@@ -129,7 +129,7 @@ function Page() {
 	}
 	return (
 		<Layout>
-			<div className=" flex flex-grow sm:flex-col justify-between mx-auto px-64 mt-24">
+			<div className=" flex flex-grow justify-between mx-auto px-64 mt-24">
 				<div>
 					<Typography className="text-center text-yellow-700 " variant="h3" textGradient>
 						Total Pagos a Choferes
