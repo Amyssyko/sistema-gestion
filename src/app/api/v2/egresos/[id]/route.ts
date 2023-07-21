@@ -21,8 +21,13 @@ export async function GET(request: Request, { params }: { params: { id: string }
 
 export async function PATCH(request: Request, { params }: { params: { id: string } }) {
 	const id = Number(params.id)
-	const { fecha, descripcion, monto, busId, proveedorId } = await request.json()
-	const newDate = new Date(fecha)
+
+	const json = await request.json()
+
+	const { descripcion, busId } = json
+	const monto = Number(json.monto)
+	const fecha = new Date(json.fecha)
+	const proveedorId = Number(json.proveedorId)
 
 	try {
 		const schema = Joi.object({
@@ -59,7 +64,7 @@ export async function PATCH(request: Request, { params }: { params: { id: string
 		}
 		const updatedEgreso = await prisma.egreso.update({
 			where: { id },
-			data: { fecha: newDate, descripcion, monto, busId, proveedorId },
+			data: { fecha, descripcion, monto, busId, proveedorId },
 		})
 
 		const { createdAt, updatedAt, ...egresoWithoutData } = updatedEgreso

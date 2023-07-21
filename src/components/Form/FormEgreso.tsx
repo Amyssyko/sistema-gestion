@@ -162,7 +162,7 @@ const FormIngreso: React.FC<Data> = ({ id }) => {
 				busId,
 				proveedorId,
 			})
-			if (response.status === 200) {
+			if (response.status === 201) {
 				toast.success("Registro Actualizado", {
 					duration: 4000,
 					position: "top-right",

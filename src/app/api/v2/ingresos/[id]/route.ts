@@ -21,8 +21,11 @@ export async function GET(request: Request, { params }: { params: { id: string }
 
 export async function PATCH(request: Request, { params }: { params: { id: string } }) {
 	const id = Number(params.id)
-	const { fecha, descripcion, monto, busId } = await request.json()
-	const newDate = new Date(fecha)
+	const json = await request.json()
+
+	const { descripcion, busId } = json
+	const monto = Number(json.monto)
+	const fecha = new Date(json.fecha)
 
 	try {
 		const schema = Joi.object({
