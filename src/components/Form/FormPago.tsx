@@ -5,6 +5,7 @@ import axios, { AxiosError, AxiosResponse } from "axios"
 import { useRouter } from "next/navigation"
 import React, { useState, useEffect, ChangeEvent } from "react"
 import toast from "react-hot-toast"
+import Notification from "../Alert"
 
 interface FormProps {
 	onSubmit: (data: FormData) => void
@@ -29,6 +30,7 @@ const FormIngreso: React.FC<Data> = ({ id }) => {
 		detalle: "",
 		fecha: "",
 	})
+	const { myError, handleError, isErrored } = useError()
 
 	const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>): void => {
 		const { name, value } = event.target
@@ -95,16 +97,12 @@ const FormIngreso: React.FC<Data> = ({ id }) => {
 					},
 				})
 			}
-			router.replace("/dashboard/lista/pagos")
+			router.push("/dashboard/lista/pagos")
 		} catch (error: Error | AxiosError | any) {
-			setFormData({
-				valor: "",
-				detalle: "",
-				fecha: "",
-			})
-			setUsuarioId("")
 			console.error(`${error.response.data} (${error.response.status})`)
 			if (error.response && error.response.status) {
+				handleError(error.response.data)
+				/**
 				toast.error(error.response.data, {
 					duration: 3000,
 					position: "top-left",
@@ -113,7 +111,7 @@ const FormIngreso: React.FC<Data> = ({ id }) => {
 						primary: "#000",
 						secondary: "#fff",
 					},
-				})
+				}) */
 			}
 		}
 		router.refresh()
@@ -131,7 +129,8 @@ const FormIngreso: React.FC<Data> = ({ id }) => {
 				fecha,
 				usuarioId,
 			})
-			if (response.status === 200) {
+
+			if (response.status === 201) {
 				toast.success("Registro Actualizado", {
 					duration: 4000,
 					position: "top-right",
@@ -146,7 +145,9 @@ const FormIngreso: React.FC<Data> = ({ id }) => {
 		} catch (error: Error | AxiosError | any) {
 			console.error(`${error.response.data} (${error.response.status})`)
 			if (error.response && error.response.status) {
-				toast.error(error.response.data, {
+				handleError(error.response.data)
+
+				/**toast.error(error.response.data, {
 					duration: 3000,
 					position: "top-left",
 					icon: "❌",
@@ -154,7 +155,7 @@ const FormIngreso: React.FC<Data> = ({ id }) => {
 						primary: "#000",
 						secondary: "#fff",
 					},
-				})
+				}) */
 			}
 			router.refresh()
 		}
@@ -215,6 +216,7 @@ const FormIngreso: React.FC<Data> = ({ id }) => {
 						))}
 					</select>
 				</div>
+				{isErrored && <Notification mensaje={myError?.message} />}
 
 				{id ? (
 					<div className="mt-6 flex justify-center">

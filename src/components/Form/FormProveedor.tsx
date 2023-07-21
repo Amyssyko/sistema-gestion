@@ -1,9 +1,11 @@
 "use client"
+import { useError } from "@/hooks/useError"
 import { Button, Card, Input, Typography } from "@material-tailwind/react"
 import axios, { AxiosError, AxiosResponse } from "axios"
 import { useRouter } from "next/navigation"
 import React, { useState, useEffect } from "react"
 import toast from "react-hot-toast"
+import Notification from "../Alert"
 
 interface FormProps {
 	onSubmit: (data: FormData) => void
@@ -33,6 +35,7 @@ const FormBus: React.FC<Data> = ({ id }) => {
 		setFormData((prevFormData) => ({ ...prevFormData, [name]: value }))
 	}
 	const router = useRouter()
+	const { myError, handleError, isErrored } = useError()
 
 	useEffect(() => {
 		const getChoferData = async () => {
@@ -81,6 +84,8 @@ const FormBus: React.FC<Data> = ({ id }) => {
 			setFormData({ nombre: "", telefono: "", email: "", direccion: "" })
 			console.error(`${error.response.data} (${error.response.status})`)
 			if (error.response && error.response.status) {
+				handleError(error.response.data)
+				/**
 				toast.error(error.response.data, {
 					duration: 3000,
 					position: "top-left",
@@ -90,6 +95,7 @@ const FormBus: React.FC<Data> = ({ id }) => {
 						secondary: "#fff",
 					},
 				})
+ */
 			}
 		}
 		router.refresh()
@@ -122,6 +128,8 @@ const FormBus: React.FC<Data> = ({ id }) => {
 		} catch (error: Error | AxiosError | any) {
 			console.error(`${error.response.data} (${error.response.status})`)
 			if (error.response && error.response.status) {
+				handleError(error.response.data)
+				/**
 				toast.error(error.response.data, {
 					duration: 3000,
 					position: "top-left",
@@ -130,7 +138,7 @@ const FormBus: React.FC<Data> = ({ id }) => {
 						primary: "#000",
 						secondary: "#fff",
 					},
-				})
+				}) */
 			}
 			router.refresh()
 		}
@@ -184,6 +192,7 @@ const FormBus: React.FC<Data> = ({ id }) => {
 						max={2025}
 					/>
 				</div>
+				{isErrored && <Notification mensaje={myError?.message} />}
 
 				{id ? (
 					<div className="mt-6 flex justify-center">

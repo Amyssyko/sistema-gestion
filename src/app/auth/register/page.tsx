@@ -10,6 +10,7 @@ import { useError } from "@/hooks/useError"
 import { verificarCedula } from "udv-ec"
 import Link from "next/link"
 import { LayoutHome } from "@/components/Layout/LayoutHome"
+import Notification from "@/components/Alert"
 
 export default function SignUp() {
 	const router = useRouter()
@@ -46,20 +47,8 @@ export default function SignUp() {
 		const doPasswordsMatch = password === confirm_password
 
 		const errorMessage =
-			isEmailEmpty && isPasswordEmpty && doPasswordsMatch
-				? "Verifique que todos los campos sean completados."
-				: isEmailEmpty
-				? "Correo requerido"
-				: isDni
-				? "Cedula requerida"
-				: !verificarCedula(dni)
-				? "Cedula Invalida"
-				: isPasswordEmpty
-				? "Contraseña requerida"
-				: isconfirmPassword
-				? "Contraseña de confirmacion requerida"
-				: !doPasswordsMatch
-				? "Contraseñas no coinciden"
+			isEmailEmpty && isPasswordEmpty && doPasswordsMatch && isconfirmPassword
+				? "Complete todos los campos."
 				: ""
 
 		if (errorMessage) {
@@ -80,26 +69,18 @@ export default function SignUp() {
 					duration: 3000,
 					position: "top-left",
 
-					// Custom Icon
 					icon: "✅",
 
-					// Change colors of success/error/loading icon
 					iconTheme: {
 						primary: "#000",
 						secondary: "#fff",
 					},
 				})
 			}
-			router.replace("/auth/login")
+			router.push("/auth/login")
 		} catch (error: Error | AxiosError | any) {
 			console.error(error)
 			handleError(error.response.data)
-			setFormValues({
-				email: "",
-				dni: "",
-				password: "",
-				confirm_password: "",
-			})
 
 			console.error(`${error.response.data} (${error.response.status})`)
 
@@ -179,13 +160,9 @@ export default function SignUp() {
 								onChange={handleInputChange}
 							/>
 						</div>
-						<div>
-							{isErrored && (
-								<Alert color="orange" variant="ghost" className=" text-sm">
-									{myError?.message}
-								</Alert>
-							)}
-						</div>
+
+						{isErrored && <Notification mensaje={myError?.message} />}
+
 						<Button type="submit" className="mt-4" fullWidth>
 							Registrar
 						</Button>

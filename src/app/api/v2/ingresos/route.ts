@@ -30,26 +30,27 @@ export async function POST(request: Request) {
 
 	try {
 		const schema = Joi.object({
+			descripcion: Joi.string().required().messages({
+				"any.required": "La descripcion es requerida",
+				"string.base": "La descripcion debe usar caracteres válidos",
+				"string.empty": "La descripcion está vacio",
+			}),
 			fecha: Joi.date().required().max("now").messages({
 				"any.required": "La fecha es requerida",
 				"date.base": "La fecha debe ser una válida",
 				"date.empty": "La fecha no puede estar vacía",
 				"date.max": "La fecha no puede ser posterior a la fecha actual",
 			}),
-			descripcion: Joi.string().required().messages({
-				"any.required": "La descripcion es requerida",
-				"string.base": "La descripcion debe usar caracteres válidos",
-				"string.empty": "La descripcion está vacio",
-			}),
+
 			monto: Joi.number().required().messages({
 				"any.required": "El monto requerido",
-				"number.base": "El monto no es correcto",
-				"number.empty": "El monto está vacio",
+				"number.base": "El monto está vacio",
+				//"number.empty": "El monto está vacio",
 			}),
 			busId: Joi.string().required().messages({
-				"any.required": "El bus es requerida",
+				"any.required": "Bus es requerida",
 				"string.base": "El bus no tiene formato correcto",
-				"string.empty": "El bus está vacio",
+				"string.empty": "Se requiere un bus",
 			}),
 		})
 		const { error } = schema.validate({ fecha, descripcion, monto, busId })

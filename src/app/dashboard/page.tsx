@@ -1,17 +1,11 @@
 "use client"
 import { Layout } from "@/components/Layout"
-import Loading from "@/components/Loading"
-import NoAdmin from "@/components/NoAdmin"
 import axios from "axios"
 import { useSession } from "next-auth/react"
 import React, { useEffect, useState } from "react"
 import { BsPieChartFill } from "react-icons/bs"
-import { VictoryLabel, VictoryPie } from "victory"
+import { VictoryPie } from "victory"
 import { Typography } from "@material-tailwind/react"
-
-type Repo = {
-	monto: number
-}
 
 interface DataPago {
 	id: number
@@ -46,7 +40,6 @@ interface DataEgreso {
 
 function Page() {
 	const { data: session } = useSession()
-	const role = session?.user?.role
 	const [ingresos, setIngresos] = useState<DataIngreso[]>([])
 	const [egresos, setEgresos] = useState<DataEgreso[]>([])
 	const [pagos, setPagos] = useState<DataPago[]>([])
@@ -84,14 +77,6 @@ function Page() {
 
 		getPagos()
 	}, [])
-
-	const Cargando = () => {
-		if (role === undefined) {
-			return <Loading />
-		} else if (role !== "admin") {
-			return <NoAdmin />
-		}
-	}
 
 	if (totalEgreso === 0 && totalIngreso === 0 && totalPago === 0 && session?.user?.role === "admin") {
 		return (
@@ -144,99 +129,95 @@ function Page() {
 	}
 	return (
 		<Layout>
-			<div className="w-full h-full">
-				{Cargando()}
-
-				<div className=" flex flex-grow justify-between mx-auto px-64 mt-24">
-					<div>
-						<Typography className="text-center text-yellow-700 " variant="h3" textGradient>
-							Total Pagos a Choferes
-						</Typography>
-						<Typography className="text-center" variant="h4" color="blue" textGradient>
-							{totalPago}
-						</Typography>
-					</div>
-
-					<div>
-						<Typography className="text-center text-orange-600" variant="h3" textGradient>
-							Total Egresos
-						</Typography>
-						<Typography className="text-center" variant="h4" color="blue" textGradient>
-							{totalEgreso}
-						</Typography>
-					</div>
-
-					<div>
-						<Typography className="text-center text-green-500" variant="h3" textGradient>
-							Total Ingresos
-						</Typography>
-						<Typography className="text-center" variant="h4" color="blue" textGradient>
-							{convertedtotalIngreso}
-						</Typography>
-					</div>
-
-					<div>
-						<Typography className="text-center" variant="h3" color="blue" textGradient>
-							Total Ganancias
-						</Typography>
-						<Typography className="text-center" variant="h4" color="blue" textGradient>
-							{totalGanancia}
-						</Typography>
-					</div>
+			<div className=" flex flex-grow sm:flex-col justify-between mx-auto px-64 mt-24">
+				<div>
+					<Typography className="text-center text-yellow-700 " variant="h3" textGradient>
+						Total Pagos a Choferes
+					</Typography>
+					<Typography className="text-center" variant="h4" color="blue" textGradient>
+						{totalPago}
+					</Typography>
 				</div>
 
-				<div className=" flex flex-col w-3/12 mx-auto">
-					<VictoryPie
-						animate={{
-							duration: 2000,
-						}}
-						events={[
-							{
-								target: "data",
-								eventHandlers: {
-									onClick: () => {
-										return [
-											{
-												target: "data",
-												mutation: ({ style }) => {
-													return style.fill === "#c43a31" ? null : { style: { fill: "#c43a31" } }
-												},
+				<div>
+					<Typography className="text-center text-orange-600" variant="h3" textGradient>
+						Total Egresos
+					</Typography>
+					<Typography className="text-center" variant="h4" color="blue" textGradient>
+						{totalEgreso}
+					</Typography>
+				</div>
+
+				<div>
+					<Typography className="text-center text-green-500" variant="h3" textGradient>
+						Total Ingresos
+					</Typography>
+					<Typography className="text-center" variant="h4" color="blue" textGradient>
+						{convertedtotalIngreso}
+					</Typography>
+				</div>
+
+				<div>
+					<Typography className="text-center" variant="h3" color="blue" textGradient>
+						Total Ganancias
+					</Typography>
+					<Typography className="text-center" variant="h4" color="blue" textGradient>
+						{totalGanancia}
+					</Typography>
+				</div>
+			</div>
+
+			<div className=" flex flex-col w-3/12 mx-auto">
+				<VictoryPie
+					animate={{
+						duration: 2000,
+					}}
+					events={[
+						{
+							target: "data",
+							eventHandlers: {
+								onClick: () => {
+									return [
+										{
+											target: "data",
+											mutation: ({ style }) => {
+												return style.fill === "#c43a31" ? null : { style: { fill: "#c43a31" } }
 											},
-											{
-												target: "labels",
-												mutation: ({ text, ingreso }) => {
-													return text === "selecionado" ? null : { text: ingreso }
-												},
+										},
+										{
+											target: "labels",
+											mutation: ({ text, ingreso }) => {
+												return text === "selecionado" ? null : { text: ingreso }
 											},
-										]
-									},
+										},
+									]
 								},
 							},
-						]}
-						style={{
-							data: {
-								fillOpacity: 0.9,
-								stroke: "black",
-								strokeWidth: 3,
-							},
-							labels: {
-								fontSize: 19,
-								fill: "#060C52",
-								fillOpacity: "0.7",
-							},
-						}}
-						colorScale={["green", "orange", "gold"]}
-						width={550}
-						height={550}
-						data={[
-							{ x: `${convertedtotalIngreso} USD ${porcentajeIngresos.toFixed(2)}%`, y: porcentajeIngresos },
-							{ x: `${totalEgreso} USD ${porcentajeEgresos.toFixed(2)}%`, y: porcentajeEgresos },
-							{ x: `${totalPago} USD ${porcentajePagos.toFixed(2)}%`, y: porcentajePagos },
-						]}
-						innerRadius={40}
-						labelRadius={70}
-					/>
-				</div>
+						},
+					]}
+					style={{
+						data: {
+							fillOpacity: 0.9,
+							stroke: "black",
+							strokeWidth: 3,
+						},
+						labels: {
+							fontSize: 19,
+							fill: "#060C52",
+							fillOpacity: "0.7",
+						},
+					}}
+					colorScale={["green", "orange", "gold"]}
+					width={550}
+					height={550}
+					data={[
+						{ x: `${convertedtotalIngreso} USD ${porcentajeIngresos.toFixed(2)}%`, y: porcentajeIngresos },
+						{ x: `${totalEgreso} USD ${porcentajeEgresos.toFixed(2)}%`, y: porcentajeEgresos },
+						{ x: `${totalPago} USD ${porcentajePagos.toFixed(2)}%`, y: porcentajePagos },
+					]}
+					innerRadius={40}
+					labelRadius={70}
+				/>
 			</div>
 		</Layout>
 	)

@@ -1,9 +1,17 @@
 import { Typography } from "@material-tailwind/react"
+import { useSession } from "next-auth/react"
 import Link from "next/link"
 
-import React from "react"
+import React, { use } from "react"
+import Loading from "./Loading"
 
 function NoAdmin() {
+	const { data: session } = useSession()
+
+	if (session?.user?.role === undefined) {
+		return <Loading />
+	}
+
 	return (
 		<div className="w-full h-screen flex flex-col items-center justify-center">
 			<Typography className="text-red-800  text-4xl">{`Sin privilegios`}</Typography>

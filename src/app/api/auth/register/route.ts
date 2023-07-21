@@ -18,12 +18,6 @@ export async function POST(request: Request) {
 
 	try {
 		const schema = Joi.object({
-			dni: Joi.string().required().min(10).max(10).messages({
-				"number.base": "La cédula debe ser un número",
-				"number.empty": "La cédula es requerida",
-				"number.min": "La cédula debe tener al menos 10 dígitos",
-				"number.max": "La cédula no puede tener más de 10 dígitos",
-			}),
 			email: Joi.string()
 				.email({ minDomainSegments: 2, tlds: { allow: ["com", "net", "org", "es", "ec"] } })
 				.required()
@@ -31,6 +25,12 @@ export async function POST(request: Request) {
 					"string.empty": "El correo es requerido",
 					"string.email": "El correo no es válido",
 				}),
+			dni: Joi.string().required().min(10).max(10).messages({
+				"string.base": "La cédula debe ser un número",
+				"string.empty": "La cédula es requerida",
+				"string.min": "La cédula debe tener al menos 10 dígitos",
+				"string.max": "La cédula no puede tener más de 10 dígitos",
+			}),
 			password: Joi.string().required().pattern(new RegExp("^(?=.*[a-z])(?=.*[A-Z]).{8,}$")).messages({
 				"any.required": "Contraseña es requerida",
 				"string.empty": "Contraseña está vacia",
@@ -43,7 +43,7 @@ export async function POST(request: Request) {
 			}),
 		})
 
-		const { error, value } = schema.validate(json)
+		const { error } = schema.validate(json)
 
 		if (error) {
 			return new NextResponse(error.message, { status: 400 })

@@ -1,10 +1,11 @@
 "use client"
 import { useError } from "@/hooks/useError"
-import { Input, Card, Typography, Button, Chip, Checkbox } from "@material-tailwind/react"
+import { Input, Card, Typography, Button, Chip, Checkbox, Alert } from "@material-tailwind/react"
 import axios, { AxiosError, AxiosResponse } from "axios"
 import { useRouter } from "next/navigation"
 import React, { useState, useEffect, ChangeEvent } from "react"
-import toast, { Toaster } from "react-hot-toast"
+import toast from "react-hot-toast"
+import Notification from "../Alert"
 
 interface FormProps {
 	onSubmit: (data: FormData) => void
@@ -93,7 +94,6 @@ const FormChofer: React.FC<Data> = ({ id }) => {
 	}, [id])
 
 	const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
-		console.log(isChecked)
 		event.preventDefault()
 		const { dni, nombre, apellido, email, password, telefono, provincia, ciudad, calle } = formData
 
@@ -111,7 +111,7 @@ const FormChofer: React.FC<Data> = ({ id }) => {
 					calle,
 					busPlaca,
 				})
-				if (response.status === 200) {
+				if (response.status === 201) {
 					toast.success("Registro Creado", {
 						duration: 4000,
 						position: "top-right",
@@ -122,41 +122,28 @@ const FormChofer: React.FC<Data> = ({ id }) => {
 						},
 					})
 				}
-				router.replace("/dashboard/lista/usuarios")
+				router.push("/dashboard/lista/usuarios")
 			} catch (error: Error | AxiosError | any) {
-				setFormData({
-					dni: "",
-					nombre: "",
-					apellido: "",
-					email: "",
-					password: "",
-					telefono: "",
-					provincia: "",
-					ciudad: "",
-					calle: "",
-				})
-				setBusPlaca("")
 				console.error(`${error.response.data} (${error.response.status})`)
 				if (error.response && error.response.status) {
-					toast.error(error.response.data, {
+					handleError(error.response.data)
+					/**toast.error(error.response.data, {
 						duration: 3000,
-						position: "top-left",
-						icon: "❌",
+						position: "top-right",
+						icon: "⚠️",
 						iconTheme: {
 							primary: "#000",
 							secondary: "#fff",
 						},
-					})
+					}) */
 				}
 			}
 			setIsChecked(false)
 		}
-		window.location.reload()
 	}
 
 	const handleUpdate = async () => {
 		const { dni, nombre, apellido, email, telefono, provincia, ciudad, calle } = formData
-		console.log(String(busPlaca))
 		try {
 			const response: AxiosResponse = await axios.patch(`/api/v2/usuarios/${id}`, {
 				dni,
@@ -175,10 +162,8 @@ const FormChofer: React.FC<Data> = ({ id }) => {
 					duration: 4000,
 					position: "top-right",
 
-					// Custom Icon
 					icon: "✅",
 
-					// Change colors of success/error/loading icon
 					iconTheme: {
 						primary: "#000",
 						secondary: "#fff",
@@ -187,86 +172,89 @@ const FormChofer: React.FC<Data> = ({ id }) => {
 			}
 			router.push("/dashboard/lista/usuarios")
 		} catch (error: Error | AxiosError | any) {
-			console.log(error)
-
-			setFormData({
-				dni: "",
-				nombre: "",
-				apellido: "",
-				email: "",
-				password: "",
-				telefono: "",
-				provincia: "",
-				ciudad: "",
-				calle: "",
-			})
 			setIsChecked(false)
 			console.error(`${error.response.data} (${error.response.status})`)
 			if (error.response && error.response.status) {
 				handleError(error.response.data)
-				toast.error(error.response.data, {
+				/**toast.error(error.response.data, {
 					duration: 3000,
-					position: "top-left",
-					icon: "❌",
+					position: "top-right",
+					icon: "⚠️",
 					iconTheme: {
 						primary: "#000",
 						secondary: "#fff",
 					},
-				})
+				}) */
 			}
 			router.refresh()
 		}
 	}
 
 	return (
-		<Card color="transparent" shadow={false} className="mx-auto my-12">
+		<Card color="transparent" shadow={false} className="mx-auto my-28">
 			<Typography variant="h4" color="blue-gray" className="mx-auto font-normal">
-				Registro de Choferes
+				Registro de Chofer
 			</Typography>
 			<Typography color="gray" className="mx-auto font-normal">
 				Ingrese los detalles del chofer a registrar
 			</Typography>
 			<form onSubmit={handleSubmit} className="mt-8 mb-2 w-80 max-w-screen-lg sm:w-96 mx-auto">
 				<div className="mb-4 flex flex-col gap-6">
-					<Input
-						size="md"
-						type={"text"}
-						name={"dni"}
-						id={"dni"}
-						label={"Cedula"}
-						value={formData.dni}
-						onChange={handleInputChange}
-					/>
+					<div className="my-1 flex items-center gap-4">
+						<Input
+							size="md"
+							type={"text"}
+							name={"dni"}
+							id={"dni"}
+							label={"Cedula"}
+							value={formData.dni}
+							onChange={handleInputChange}
+						/>
 
-					<Input
-						size="md"
-						type={"text"}
-						name={"nombre"}
-						id={"nombre"}
-						label={"Nombre"}
-						value={formData.nombre}
-						onChange={handleInputChange}
-					/>
+						<Input
+							size="md"
+							type={"text"}
+							name={"nombre"}
+							id={"nombre"}
+							label={"Nombre"}
+							value={formData.nombre}
+							onChange={handleInputChange}
+						/>
+					</div>
 
-					<Input
-						size="md"
-						type={"text"}
-						name={"apellido"}
-						id={"apellido"}
-						label={"Apellido"}
-						value={formData.apellido}
-						onChange={handleInputChange}
-					/>
-					<Input
-						size="md"
-						type={"email"}
-						name={"email"}
-						id={"email"}
-						label={"Correo"}
-						value={formData.email}
-						onChange={handleInputChange}
-					/>
-					<div className="flex flex-col">
+					<div className="my-1 flex items-center gap-4">
+						<Input
+							size="md"
+							type={"text"}
+							name={"apellido"}
+							id={"apellido"}
+							label={"Apellido"}
+							value={formData.apellido}
+							onChange={handleInputChange}
+						/>
+						<Input
+							size="md"
+							type={"email"}
+							name={"email"}
+							id={"email"}
+							label={"Correo"}
+							value={formData.email}
+							onChange={handleInputChange}
+						/>
+					</div>
+
+					<div className="my-1 flex items-center gap-4">
+						<Input
+							size="md"
+							type={"tel"}
+							name={"telefono"}
+							id={"telefono"}
+							maxLength={10}
+							label={"Telefono"}
+							value={formData.telefono}
+							onChange={handleInputChange}
+						/>
+
 						<Input
 							disabled={isChecked}
 							size="md"
@@ -277,85 +265,66 @@ const FormChofer: React.FC<Data> = ({ id }) => {
 							value={isChecked ? "" : formData.password}
 							onChange={handleInputChange}
 						/>
-						<div className="ml-96 absolute mt-1">
-							<Chip
-								value="inhabilitar"
-								variant="ghost"
-								className="bg-white"
-								icon={
-									<Checkbox
-										type="checkbox"
-										value="true"
-										onChange={(e) => setIsChecked(!isChecked)}
-										id="check"
-										name="check"
-										color="green"
-										ripple={false}
-										containerProps={{ className: "p-0" }}
-										className="border-gray-900 border-2 checked:bg-blue-900 checked:border-green-900 -ml-px before:hidden"
-									/>
-								}
-							/>
-						</div>
+						<label className="flex items-center mt-2">
+							<input onChange={(e) => setIsChecked(!isChecked)} type="checkbox" className="mr-2 w-4 h-4" />
+							<span className="text-sm text-gray-600">Inhabilitar</span>
+						</label>
 					</div>
 
-					<Input
-						size="md"
-						type={"tel"}
-						name={"telefono"}
-						id={"telefono"}
-						maxLength={10}
-						label={"Telefono"}
-						value={formData.telefono}
-						onChange={handleInputChange}
-					/>
+					<div className="my-1 flex items-center gap-4">
+						<Input
+							size="md"
+							type={"text"}
+							name={"provincia"}
+							id={"provincia"}
+							label={"Provincia"}
+							value={formData.provincia}
+							onChange={handleInputChange}
+						/>
 
-					<Input
-						size="md"
-						type={"text"}
-						name={"provincia"}
-						id={"provincia"}
-						label={"Provincia"}
-						value={formData.provincia}
-						onChange={handleInputChange}
-					/>
+						<Input
+							size="md"
+							type={"text"}
+							name={"ciudad"}
+							id={"ciudad"}
+							label={"Ciudad"}
+							value={formData.ciudad}
+							onChange={handleInputChange}
+						/>
+					</div>
 
-					<Input
-						size="md"
-						type={"text"}
-						name={"ciudad"}
-						id={"ciudad"}
-						label={"Ciudad"}
-						value={formData.ciudad}
-						onChange={handleInputChange}
-					/>
+					<div className="my-2 flex items-center gap-4">
+						<Input
+							size="md"
+							type={"text"}
+							name={"calle"}
+							id={"calle"}
+							label={"Dirreción"}
+							value={formData.calle}
+							minLength={3}
+							maxLength={50}
+							onChange={handleInputChange}
+						/>
 
-					<Input
-						size="md"
-						type={"text"}
-						name={"calle"}
-						id={"calle"}
-						label={"Dirreción"}
-						value={formData.calle}
-						minLength={3}
-						maxLength={50}
-						onChange={handleInputChange}
-					/>
-
-					<label className="-mb-6 -mt-5 text-xs ml-3 text-gray-500">Bus</label>
-					<select
-						className="border border-gray-400 hover:bg-white hover:text-gray-400 text-gray-700 px-4 py-2 rounded-md"
-						value={busPlaca}
-						onChange={handleSelectChange}
-					>
-						<option value="0">Selecione Bus</option>
-						{buses.map(({ placa }) => (
-							<option key={placa} value={placa}>
-								{placa}
-							</option>
-						))}
-					</select>
+						<div className="w-full">
+							<label className="-mb-6 -mt-5 text-xs ml-3 text-gray-500 absolute">Bus</label>
+							<select
+								className="border border-blue-gray-400/60 hover:bg-white hover:text-gray-400 text-gray-700 py-2 rounded-md w-52 h-10"
+								value={busPlaca}
+								onChange={handleSelectChange}
+							>
+								<option value="0">Selecione Bus</option>
+								{buses.map(({ placa }) => (
+									<option key={placa} value={placa}>
+										{placa}
+									</option>
+								))}
+							</select>
+						</div>
+					</div>
 				</div>
+
+				{isErrored && <Notification mensaje={myError?.message} />}
 
 				{id ? (
 					<div className="mt-6 flex justify-center">

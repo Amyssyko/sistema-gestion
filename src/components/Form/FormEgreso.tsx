@@ -8,6 +8,7 @@ import toast from "react-hot-toast"
 import Loading from "../Loading"
 import NoAdmin from "../NoAdmin"
 import { useSession } from "next-auth/react"
+import Notification from "../Alert"
 
 interface FormProps {
 	onSubmit: (data: FormData) => void
@@ -26,19 +27,6 @@ interface FormData {
 const FormIngreso: React.FC<Data> = ({ id }) => {
 	const { data: session } = useSession()
 	const rol = session?.user.role
-	const Cargando = () => {
-		if (session?.user.role === undefined) {
-			setTimeout(() => {
-				router.push("/")
-			}, 4000)
-			return <Loading />
-		}
-	}
-	const SinAcceso = () => {
-		if (session?.user.role !== "admin" && session?.user.role !== "empleado") {
-			return <NoAdmin />
-		}
-	}
 
 	const [buses, setBuses] = useState([])
 	const [proveedores, setProveedores] = useState([])
@@ -50,7 +38,7 @@ const FormIngreso: React.FC<Data> = ({ id }) => {
 		monto: "",
 	})
 
-	const { myError, handleError, isErrored, resetError } = useError()
+	const { myError, handleError, isErrored } = useError()
 
 	const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>): void => {
 		const { name, value } = event.target
@@ -72,7 +60,7 @@ const FormIngreso: React.FC<Data> = ({ id }) => {
 				const response = await axios.get("/api/v2/buses")
 				setBuses(response.data)
 			} catch (error) {
-				console.error("Error fetching buses:", error)
+				console.error("Pasó algo", error)
 			}
 		}
 
@@ -85,7 +73,7 @@ const FormIngreso: React.FC<Data> = ({ id }) => {
 				const response = await axios.get("/api/v2/proveedores")
 				setProveedores(response.data)
 			} catch (error) {
-				console.error("Error fetching proveedores:", error)
+				console.error("Pasó algo", error)
 			}
 		}
 
@@ -136,20 +124,16 @@ const FormIngreso: React.FC<Data> = ({ id }) => {
 				})
 			}
 			if (rol === "admin") {
-				return router.replace("/dashboard/lista/egresos")
+				return router.push("/dashboard/lista/egresos")
 			}
 			if (rol === "empleado") {
-				return router.replace("/ingresos/lista")
+				return router.push("/ingresos/lista")
 			}
 		} catch (error: Error | AxiosError | any) {
-			setFormData({
-				fecha: "",
-				descripcion: "",
-				monto: "",
-			})
-			setBusId("")
 			console.error(`${error.response.data} (${error.response.status})`)
 			if (error.response && error.response.status) {
+				handleError(error.response.data)
+				/**
 				toast.error(error.response.data, {
 					duration: 3000,
 					position: "top-left",
@@ -159,6 +143,7 @@ const FormIngreso: React.FC<Data> = ({ id }) => {
 						secondary: "#fff",
 					},
 				})
+ */
 			}
 		}
 		router.refresh()
@@ -189,15 +174,16 @@ const FormIngreso: React.FC<Data> = ({ id }) => {
 				})
 			}
 			if (rol === "admin") {
-				return router.replace("/dashboard/lista/egresos")
+				return router.push("/dashboard/lista/egresos")
 			}
 			if (rol === "empleado") {
-				return router.replace("/ingresos/lista")
+				return router.push("/ingresos/lista")
 			}
 		} catch (error: Error | AxiosError | any) {
 			console.error(`${error.response.data} (${error.response.status})`)
 			if (error.response && error.response.status) {
-				toast.error(error.response.data, {
+				handleError(error.response.data)
+				/**	toast.error(error.response.data, {
 					duration: 3000,
 					position: "top-left",
 					icon: "❌",
@@ -205,7 +191,7 @@ const FormIngreso: React.FC<Data> = ({ id }) => {
 						primary: "#000",
 						secondary: "#fff",
 					},
-				})
+				}) */
 			}
 			router.refresh()
 		}
@@ -213,8 +199,6 @@ const FormIngreso: React.FC<Data> = ({ id }) => {
 
 	return (
 		<div>
-			{Cargando()}
-			{SinAcceso()}
 			<Card color="transparent" shadow={false} className="mx-auto my-12">
 				<Typography variant="h4" color="blue-gray" className="mx-auto font-normal">
 					{id ? `Registro de Egreso de Bus ${busId}` : `Registro de Egreso de Bus`}
@@ -281,6 +265,8 @@ const FormIngreso: React.FC<Data> = ({ id }) => {
 							))}
 						</select>
 					</div>
+
+					{isErrored && <Notification mensaje={myError?.message} />}
 
 					{id ? (
 						<div className="mt-6 flex justify-center">

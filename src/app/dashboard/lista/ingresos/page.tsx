@@ -89,6 +89,7 @@ export default function Page() {
 						secondary: "#fff",
 					},
 				})
+
 				window.location.reload()
 			}
 		} catch (error: Error | AxiosError | any) {
@@ -104,7 +105,6 @@ export default function Page() {
 					},
 				})
 			}
-			window.location.reload()
 		}
 	}
 

@@ -29,10 +29,6 @@ export default function SidebarAdmin() {
 		setOpen(open === value ? 0 : value)
 	}
 
-	if (session?.user?.role !== "admin") {
-		return <NoAdmin />
-	}
-
 	return (
 		<Card className="fixed top-14 left-2 h-[calc(100vh-11rem)] w-60 sm:w-60 md:w-60 lg:w-60 xl:w-60 2xl:w-60 p-2  ">
 			<div className="mb-2 flex items-center gap-4 p-4">

@@ -61,17 +61,17 @@ export async function POST(request: Request) {
 					"string.empty": "El email está vacio",
 					"string.email": "El email no es válido",
 				}),
-			password: Joi.string().required().messages({
-				"any.required": "La contraseña requerida",
-				"string.base": "La contraseña tiene que ser solo letras, numeros y caracteres",
-				"string.empty": "La contraseña está vacio",
-			}),
-			telefono: Joi.string().required().min(10).min(10).messages({
+			telefono: Joi.string().required().min(10).max(10).messages({
 				"any.required": "El telefono es requerido",
 				"string.base": "El telefono debe ser solo números",
 				"string.empty": "El telefono está vacio",
 				"string.min": "El telefono debe tener al menos 10 dígitos",
 				"string.max": "El telefono no puede tener más de 10 dígitos",
+			}),
+			password: Joi.string().required().messages({
+				"any.required": "La contraseña requerida",
+				"string.base": "La contraseña tiene que ser solo letras, numeros y caracteres",
+				"string.empty": "La contraseña está vacio",
 			}),
 			provincia: Joi.string().required().messages({
 				"any.required": "La provincia requerida",

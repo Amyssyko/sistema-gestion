@@ -113,10 +113,8 @@ const FromTransaccion: React.FC<Data> = ({ id }) => {
 					duration: 4000,
 					position: "top-right",
 
-					// Custom Icon
 					icon: "❌",
 
-					// Change colors of success/error/loading icon
 					iconTheme: {
 						primary: "#000",
 						secondary: "#fff",
@@ -158,9 +156,7 @@ const FromTransaccion: React.FC<Data> = ({ id }) => {
 				toast.success("Registro Actualizado", {
 					duration: 4000,
 					position: "top-right",
-					// Custom Icon
 					icon: "✅",
-					// Change colors of success/error/loading icon
 					iconTheme: {
 						primary: "#000",
 						secondary: "#fff",

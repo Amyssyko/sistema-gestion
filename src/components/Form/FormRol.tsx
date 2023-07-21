@@ -5,6 +5,7 @@ import axios, { AxiosError, AxiosResponse } from "axios"
 import { useRouter } from "next/navigation"
 import React, { useState, useEffect, ChangeEvent } from "react"
 import toast, { Toaster } from "react-hot-toast"
+import Notification from "../Alert"
 
 interface FormProps {
 	onSubmit: (data: FormData) => void
@@ -22,8 +23,6 @@ interface FormData {
 }
 
 const FormRol: React.FC<Data> = ({ id }) => {
-	const [roles, setRoles] = useState([])
-
 	const [role, setRole] = useState("")
 	const [formData, setFormData] = useState<FormData>({
 		dni: "",
@@ -32,25 +31,12 @@ const FormRol: React.FC<Data> = ({ id }) => {
 		email: "",
 	})
 
-	const { myError, handleError, isErrored, resetError } = useError()
+	const { myError, handleError, isErrored } = useError()
 
 	const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>): void => {
 		const { name, value } = event.target
 		setFormData((prevFormData) => ({ ...prevFormData, [name]: value }))
 	}
-
-	useEffect(() => {
-		const fetchPets = async () => {
-			try {
-				const response = await axios.get("/api/v2/roles")
-				setRoles(response.data)
-			} catch (error) {
-				console.error("Error fetching roles:", error)
-			}
-		}
-
-		fetchPets()
-	}, [])
 
 	const router = useRouter()
 	useEffect(() => {
@@ -97,18 +83,13 @@ const FormRol: React.FC<Data> = ({ id }) => {
 						},
 					})
 				}
-				router.replace("/dashboard/lista/usuarios")
+				router.push("/dashboard/lista/usuarios")
 			} catch (error: Error | AxiosError | any) {
-				setFormData({
-					dni: "",
-					nombre: "",
-					apellido: "",
-					email: "",
-				})
-				setRole("")
 				console.error(`${error.response.data} (${error.response.status})`)
 				if (error.response && error.response.status) {
-					toast.error(error.response.data, {
+					handleError(error.response.data)
+
+					/**toast.error(error.response.data, {
 						duration: 3000,
 						position: "top-left",
 						icon: "❌",
@@ -116,7 +97,7 @@ const FormRol: React.FC<Data> = ({ id }) => {
 							primary: "#000",
 							secondary: "#fff",
 						},
-					})
+					}) */
 				}
 			}
 			router.refresh()
@@ -135,10 +116,8 @@ const FormRol: React.FC<Data> = ({ id }) => {
 					duration: 4000,
 					position: "top-right",
 
-					// Custom Icon
 					icon: "✅",
 
-					// Change colors of success/error/loading icon
 					iconTheme: {
 						primary: "#000",
 						secondary: "#fff",
@@ -150,7 +129,7 @@ const FormRol: React.FC<Data> = ({ id }) => {
 			console.error(`${error.response.data} (${error.response.status})`)
 			if (error.response && error.response.status) {
 				handleError(error.response.data)
-				toast.error(error.response.data, {
+				/**toast.error(error.response.data, {
 					duration: 3000,
 					position: "top-left",
 					icon: "❌",
@@ -158,7 +137,7 @@ const FormRol: React.FC<Data> = ({ id }) => {
 						primary: "#000",
 						secondary: "#fff",
 					},
-				})
+				}) */
 			}
 		}
 	}
@@ -223,6 +202,7 @@ const FormRol: React.FC<Data> = ({ id }) => {
 						<Option value="empleado"> empleado</Option>
 					</Select>
 				</div>
+				{isErrored && <Notification mensaje={myError?.message} />}
 
 				{id ? (
 					<div className="mt-6 flex justify-center">

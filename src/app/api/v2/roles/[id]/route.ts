@@ -116,7 +116,7 @@ export async function PATCH(request: Request, { params }: { params: { id: string
 			return new NextResponse(`No se encontró matricula ${id}`, { status: 404 })
 		}
 
-		return new NextResponse(error.message, { status: 500 })
+		return new NextResponse("Se require rol" /**error.message */, { status: 500 })
 	}
 }
 

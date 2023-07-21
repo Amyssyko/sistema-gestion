@@ -67,7 +67,7 @@ export async function PATCH(request: Request, { params }: { params: { id: string
 			})
 		}
 		if (error.code === "P2003") {
-			return new NextResponse("No existe id", {
+			return new NextResponse("No existe Usuario", {
 				status: 409,
 			})
 		}

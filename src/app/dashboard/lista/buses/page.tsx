@@ -25,7 +25,7 @@ const TABLE_HEAD = [
 	"Placa",
 	"Modelo",
 	"Capacidad",
-	"año",
+	"Año",
 	"Fecha Creación",
 	"Fecha Actualización",
 	"Actualizar",

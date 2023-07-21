@@ -20,8 +20,8 @@ model Bus {
   ingresos  Ingreso[]
   egresos   Egreso[]
   usuario   Usuario?
-  createdAt DateTime? @default(now())
-  updatedAt DateTime? @updatedAt
+  createdAt DateTime? @default(now()) @db.Timestamptz()
+  updatedAt DateTime? @updatedAt @db.Timestamptz()
 }
 
 // Define la entidad "Ingresos"
@@ -32,8 +32,8 @@ model Ingreso {
   monto       Decimal
   bus         Bus?      @relation(fields: [busId], references: [placa])
   busId       String?
-  createdAt   DateTime? @default(now())
-  updatedAt   DateTime? @updatedAt
+  createdAt   DateTime? @default(now()) @db.Timestamptz()
+  updatedAt   DateTime? @updatedAt @db.Timestamptz()
 }
 
 // Define la entidad "Egresos"
@@ -47,8 +47,8 @@ model Egreso {
   busId       String?
   proveedor   Proveedor? @relation(fields: [proveedorId], references: [id])
   proveedorId Int?
-  createdAt   DateTime   @default(now())
-  updatedAt   DateTime   @updatedAt
+  createdAt   DateTime   @default(now()) @db.Timestamptz()
+  updatedAt   DateTime   @updatedAt @db.Timestamptz()
 }
 
 // Define la entidad "choferes"
@@ -74,8 +74,8 @@ model Usuario {
   bus       Bus?      @relation(fields: [busPlaca], references: [placa])
   busPlaca  String?   @unique
   pago      Pago[]
-  createdAt DateTime? @default(now())
-  updatedAt DateTime? @updatedAt
+  createdAt DateTime? @default(now()) @db.Timestamptz()
+  updatedAt DateTime? @updatedAt @db.Timestamptz()
 }
 
 model Proveedor {
@@ -85,8 +85,8 @@ model Proveedor {
   email     String?   @unique
   direccion String?
   egreso    Egreso[]
-  createdAt DateTime? @default(now())
-  updatedAt DateTime? @updatedAt
+  createdAt DateTime? @default(now()) @db.Timestamptz()
+  updatedAt DateTime? @updatedAt @db.Timestamptz()
 }
 
 model Pago {
@@ -96,6 +96,6 @@ model Pago {
   fecha     DateTime
   Usuario   Usuario?  @relation(fields: [usuarioId], references: [id])
   usuarioId Int?
-  createdAt DateTime? @default(now())
-  updatedAt DateTime? @updatedAt
+  createdAt DateTime? @default(now()) @db.Timestamptz()
+  updatedAt DateTime? @updatedAt @db.Timestamptz()
 }

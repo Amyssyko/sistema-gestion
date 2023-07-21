@@ -1,20 +1,7 @@
 "use client"
-import Balance from "@/components/Balance"
-import ExpenseChart from "@/components/ExpenseChart"
-import TansactionExpense from "@/components/transactions/TansactionExpense"
-import TransactionForm from "@/components/transactions/TransactionForm"
-import TransactionList from "@/components/transactions/TransactionList"
-import { GlobalProvider } from "../context/GlobalState"
-import { useSession } from "next-auth/react"
-import NavBar from "@/components/NavBar"
 import { Card, Typography } from "@material-tailwind/react"
 import { LayoutHome } from "@/components/Layout/LayoutHome"
 import Image from "next/image"
-
-/**export const metadata = {
-	title: "Sistema Gestion de transporte de Turismo",
-	description: "App de Gestion",
-} */
 
 const Home = () => {
 	return (
@@ -27,10 +14,10 @@ const Home = () => {
 						className="h-[24rem] w-full object-cover object-center"
 						height={800}
 						width={800}
-						src="https://cdn.pixabay.com/photo/2019/12/29/11/15/miniaturized-4726756_1280.jpg"
+						src="https://cdn.pixabay.com/photo/2016/06/15/07/27/ecuador-1458346_1280.jpg"
 					/>
 				</Card>
-				<Typography variant="h2" color="blue-gray" className="mb-2">
+				<Typography variant="h2" color="blue-gray" className="mb-2 text-center">
 					Cooperativa de Transporte Turismo La Maná
 				</Typography>
 				<Typography color="gray" className="font-normal text-justify">
@@ -49,7 +36,7 @@ const Home = () => {
 						className="h-[24rem] w-full object-cover object-center"
 						height={800}
 						width={800}
-						src="https://cdn.pixabay.com/photo/2017/07/01/03/27/bus-2460482_1280.jpg"
+						src="https://cdn.pixabay.com/photo/2012/02/28/10/23/tortoise-18209_1280.jpg"
 					/>
 				</Card>
 				<Typography color="gray" className="font-normal text-justify">

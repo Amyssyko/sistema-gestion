@@ -28,7 +28,7 @@ export async function PATCH(request: Request, { params }: { params: { id: string
 		dni: Joi.string().required().min(10).max(10).messages({
 			"any.required": "Cedula es requerida",
 			"string.base": "La cédula solo contiene números",
-			"string.empty": "La cédula es contiene solo números",
+			"string.empty": "La cédula está vacia",
 			"string.min": "La cédula debe tener al menos 10 dígitos",
 			"string.max": "La cédula no puede tener más de 10 dígitos",
 		}),
@@ -51,13 +51,18 @@ export async function PATCH(request: Request, { params }: { params: { id: string
 				"string.empty": "El email está vacio",
 				"string.email": "El email no es válido",
 			}),
-		telefono: Joi.string().required().min(10).min(10).min(10).max(10).messages({
+		telefono: Joi.string().required().min(10).max(10).messages({
 			"any.required": "El telefono es requerido",
 			"string.base": "El telefono debe ser solo números",
 			"string.empty": "El telefono está vacio",
 			"string.min": "El telefono debe tener al menos 10 dígitos",
 			"string.max": "El telefono no puede tener más de 10 dígitos",
 		}),
+		/**	password: Joi.string().required().messages({
+			"any.required": "La contraseña requerida",
+			"string.base": "La contraseña tiene que ser solo letras, numeros y caracteres",
+			"string.empty": "La contraseña está vacio",
+		}), */
 		provincia: Joi.string().required().messages({
 			"any.required": "La provincia requerida",
 			"string.base": "La provincia tiene que ser solo letras",
@@ -69,9 +74,9 @@ export async function PATCH(request: Request, { params }: { params: { id: string
 			"string.empty": "La ciudad está vacio",
 		}),
 		calle: Joi.string().required().messages({
-			"any.required": "La dirección es requerida",
-			"string.base": "La dirección no tiene formato correcto",
-			"string.empty": "La dirección está vacio",
+			"any.required": "La calle requerida",
+			"string.base": "La calle no tiene formato correcto",
+			"string.empty": "La calle está vacio",
 		}),
 		/**	busPlaca: Joi.string()
 			//.pattern(new RegExp(/[A-C,E,G-Z]{1}[A]{1}[A-Z]{1}\d{4}/))
@@ -125,7 +130,6 @@ export async function PATCH(request: Request, { params }: { params: { id: string
 			return NextResponse.json(userWithoutPerson, { status: 200 })
 		}
 	} catch (error: any) {
-
 		//Si ya existe email en otra cuenta
 		if (error.code === "P2002") {
 			return new NextResponse(`Ya existe se encuentra en uso ${busPlaca}`, { status: 409 })

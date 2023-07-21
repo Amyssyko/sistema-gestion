@@ -9,7 +9,7 @@ function NavList() {
 		<List className="mt-4 mb-6 p-0 lg:mt-0 lg:mb-0 lg:flex-row lg:p-1">
 			<Typography as="div" variant="small" color="blue-gray" className="font-normal">
 				<Link href={"/dashboard"}>
-					<ListItem className="flex items-center gap-2 py-2 pr-4">
+					<ListItem className="flex items-center gap-2 py-2 pr-4 hover:bg-deep-purple-100 hover:text-light-blue-900">
 						<svg
 							fill="currentColor"
 							strokeWidth="0"
@@ -26,7 +26,7 @@ function NavList() {
 			</Typography>
 			<Typography as="div" variant="small" color="blue-gray" className="font-normal">
 				<Link href={"/ingresos"}>
-					<ListItem className="flex items-center gap-2 py-2 pr-4">
+					<ListItem className="flex items-center gap-2 py-2 pr-4 hover:bg-deep-purple-100 hover:text-light-blue-900">
 						<svg
 							fill="currentColor"
 							strokeWidth="0"
@@ -43,7 +43,7 @@ function NavList() {
 			</Typography>
 			<Typography as="div" variant="small" color="blue-gray" className="font-normal">
 				<Link href={"/egresos"}>
-					<ListItem className="flex items-center gap-2 py-2 pr-4">
+					<ListItem className="flex items-center gap-2 py-2 pr-4 hover:bg-deep-purple-100 hover:text-light-blue-900">
 						<svg
 							fill="currentColor"
 							strokeWidth="2"
@@ -79,7 +79,7 @@ export default function NavBar() {
 			<div className="flex items-center justify-between text-blue-gray-900">
 				<Link href={"/"}>
 					<Typography as="span" className="mr-4 cursor-pointer py-1.5 lg:ml-2">
-						Gestión Coop Turisma La Maná
+						Gestion de transporte de Turismo La Mana
 					</Typography>{" "}
 				</Link>
 				<div className="hidden lg:block">
@@ -91,7 +91,7 @@ export default function NavBar() {
 							onClick={() => signOut()}
 							variant="text"
 							size="sm"
-							className="text-red-800/80 hover:text-red-500/100"
+							className="text-red-800/80 hover:text-white hover:bg-red-500"
 						>
 							Cerrar Sesión
 						</Button>
@@ -100,14 +100,14 @@ export default function NavBar() {
 							onClick={() => signIn()}
 							variant="text"
 							size="sm"
-							className="text-black/80 hover:text-blue-500"
+							className="text-black/80 hover:text-white hover:bg-blue-500"
 						>
 							Iniciar Sesión
 						</Button>
 					)}
 
 					<Link href={"/auth/register"}>
-						<Button variant="gradient" size="sm">
+						<Button variant="text" size="sm" className="text-black/80  hover:bg-blue-800 hover:text-white">
 							Registro
 						</Button>
 					</Link>

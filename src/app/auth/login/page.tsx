@@ -10,6 +10,7 @@ import React from "react"
 import Link from "next/link"
 import { LayoutHome } from "@/components/Layout/LayoutHome"
 import { env } from "process"
+import Notification from "@/components/Alert"
 
 const Page = () => {
 	const router = useRouter()
@@ -57,7 +58,6 @@ const Page = () => {
 			callbackUrl: env.NEXTAUTH_URL,
 		})
 
-		console.log(result)
 		if (result?.error === "CredentialsSignin") {
 			setFormValues({
 				email: "",
@@ -66,11 +66,7 @@ const Page = () => {
 			toast.error("Credenciales Invalidas", {
 				duration: 1000,
 				position: "top-right",
-
-				// Custom Icon
 				icon: "❌",
-
-				// Change colors of success/error/loading icon
 				iconTheme: {
 					primary: "#000",
 					secondary: "#fff",
@@ -84,9 +80,7 @@ const Page = () => {
 			toast.success("Sesión Iniciada", {
 				duration: 3000,
 				position: "top-center",
-
 				icon: "🚌",
-
 				iconTheme: {
 					primary: "#000",
 					secondary: "#fff",
@@ -138,14 +132,7 @@ const Page = () => {
 							//placeholder="********"
 						/>
 						<div className="flex w-full flex-col gap-2">
-							{isErrored && (
-								<Alert
-									color={myError?.message == "Credenciales Invalidas" ? "red" : "orange"}
-									variant="ghost"
-								>
-									{myError?.message}
-								</Alert>
-							)}
+							{isErrored && <Notification mensaje={myError?.message} />}
 						</div>
 						<Button type="submit" className="mt-4" fullWidth>
 							Ingresar

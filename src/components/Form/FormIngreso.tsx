@@ -8,6 +8,7 @@ import React, { useState, useEffect, ChangeEvent } from "react"
 import toast from "react-hot-toast"
 import Loading from "../Loading"
 import NoAdmin from "../NoAdmin"
+import Notification from "../Alert"
 
 interface FormProps {
 	onSubmit: (data: FormData) => void
@@ -25,20 +26,7 @@ interface FormData {
 
 const FormIngreso: React.FC<Data> = ({ id }) => {
 	const { data: session } = useSession()
-	const rol = session?.user.role
-	const Cargando = () => {
-		if (session?.user.role === undefined) {
-			setTimeout(() => {
-				router.push("/")
-			}, 4000)
-			return <Loading />
-		}
-	}
-	const SinAcceso = () => {
-		if (session?.user.role !== "admin" && session?.user.role !== "empleado") {
-			return <NoAdmin />
-		}
-	}
+	const rol = session?.user?.role
 
 	const [buses, setBuses] = useState([])
 	const [busId, setBusId] = useState("")
@@ -48,7 +36,7 @@ const FormIngreso: React.FC<Data> = ({ id }) => {
 		monto: "",
 	})
 
-	const { myError, handleError, isErrored, resetError } = useError()
+	const { isErrored, handleError, myError } = useError()
 
 	const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>): void => {
 		const { name, value } = event.target
@@ -115,21 +103,16 @@ const FormIngreso: React.FC<Data> = ({ id }) => {
 				})
 			}
 			if (rol === "admin") {
-				return router.replace("/dashboard/lista/ingresos")
+				return router.push("/dashboard/lista/ingresos")
 			}
 			if (rol === "empleado") {
-				return router.replace("/ingresos/lista")
+				return router.push("/ingresos/lista")
 			}
 		} catch (error: Error | AxiosError | any) {
-			setFormData({
-				fecha: "",
-				descripcion: "",
-				monto: "",
-			})
-			setBusId("")
 			console.error(`${error.response.data} (${error.response.status})`)
 			if (error.response && error.response.status) {
-				toast.error(error.response.data, {
+				handleError(error.response.data)
+				/**toast.error(error.response.data, {
 					duration: 3000,
 					position: "top-left",
 					icon: "❌",
@@ -137,7 +120,7 @@ const FormIngreso: React.FC<Data> = ({ id }) => {
 						primary: "#000",
 						secondary: "#fff",
 					},
-				})
+				}) */
 			}
 		}
 		router.refresh()
@@ -155,7 +138,7 @@ const FormIngreso: React.FC<Data> = ({ id }) => {
 				monto,
 				busId,
 			})
-			if (response.status === 200) {
+			if (response.status === 201) {
 				toast.success("Registro Actualizado", {
 					duration: 4000,
 					position: "top-right",
@@ -167,15 +150,17 @@ const FormIngreso: React.FC<Data> = ({ id }) => {
 				})
 			}
 			if (rol === "admin") {
-				return router.replace("/dashboard/lista/ingresos")
+				return router.push("/dashboard/lista/ingresos")
 			}
 			if (rol === "empleado") {
-				return router.replace("/ingresos/lista")
+				return router.push("/ingresos/lista")
 			}
 		} catch (error: Error | AxiosError | any) {
 			console.error(`${error.response.data} (${error.response.status})`)
 			if (error.response && error.response.status) {
-				toast.error(error.response.data, {
+				handleError(error.response.data)
+
+				/**toast.error(error.response.data, {
 					duration: 3000,
 					position: "top-left",
 					icon: "❌",
@@ -183,7 +168,7 @@ const FormIngreso: React.FC<Data> = ({ id }) => {
 						primary: "#000",
 						secondary: "#fff",
 					},
-				})
+				}) */
 			}
 			router.refresh()
 		}
@@ -191,8 +176,6 @@ const FormIngreso: React.FC<Data> = ({ id }) => {
 
 	return (
 		<div>
-			{Cargando()}
-			{SinAcceso()}
 			<Card color="transparent" shadow={false} className="mx-auto my-12">
 				<Typography variant="h4" color="blue-gray" className="mx-auto font-normal">
 					{id ? `Registro de Ingresos de Bus ${busId}` : `Registro de Ingresos de Bus`}
@@ -245,6 +228,7 @@ const FormIngreso: React.FC<Data> = ({ id }) => {
 							))}
 						</select>
 					</div>
+					{isErrored && <Notification mensaje={myError?.message} />}
 
 					{id ? (
 						<div className="mt-6 flex justify-center">
