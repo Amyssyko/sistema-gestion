@@ -57,7 +57,7 @@ export async function PATCH(request: Request, { params }: { params: { id: string
 		}
 		const updatedIngreso = await prisma.ingreso.update({
 			where: { id },
-			data: { fecha: newDate, descripcion, monto, busId },
+			data: { fecha, descripcion, monto, busId },
 		})
 
 		const { createdAt, updatedAt, ...ingresoWithoutData } = updatedIngreso
